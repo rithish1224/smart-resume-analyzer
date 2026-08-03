@@ -1,0 +1,124 @@
+{
+  "Python": {
+    "resources": [
+      {"name": "Python for Everybody - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 40, "cost": "free_audit"},
+      {"name": "Automate the Boring Stuff", "url": "https://automatetheboringstuff.com", "type": "book", "hours": 20, "cost": "free"}
+    ],
+    "estimated_hours": 40,
+    "difficulty": "beginner"
+  },
+  "Java": {
+    "resources": [
+      {"name": "Java Programming and Software Engineering Fundamentals - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 50, "cost": "free_audit"}
+    ],
+    "estimated_hours": 50,
+    "difficulty": "intermediate"
+  },
+  "JavaScript": {
+    "resources": [
+      {"name": "JavaScript Algorithms and Data Structures - FreeCodeCamp", "url": "https://freecodecamp.org", "type": "course", "hours": 300, "cost": "free"}
+    ],
+    "estimated_hours": 150,
+    "difficulty": "beginner"
+  },
+  "SQL": {
+    "resources": [
+      {"name": "SQL for Data Science - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 20, "cost": "free_audit"},
+      {"name": "Mode SQL Tutorial", "url": "https://mode.com/sql-tutorial/", "type": "article", "hours": 10, "cost": "free"}
+    ],
+    "estimated_hours": 20,
+    "difficulty": "beginner"
+  },
+  "Git": {
+    "resources": [
+      {"name": "Version Control with Git - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 15, "cost": "free_audit"},
+      {"name": "Pro Git Book", "url": "https://git-scm.com/book/en/v2", "type": "book", "hours": 20, "cost": "free"}
+    ],
+    "estimated_hours": 15,
+    "difficulty": "beginner"
+  },
+  "React": {
+    "resources": [
+      {"name": "React Documentation (Beta)", "url": "https://react.dev/", "type": "article", "hours": 30, "cost": "free"}
+    ],
+    "estimated_hours": 40,
+    "difficulty": "intermediate"
+  },
+  "Node.js": {
+    "resources": [
+      {"name": "Node.js Tutorial and Projects Course - Udemy", "url": "https://udemy.com/", "type": "course", "hours": 20, "cost": "paid"}
+    ],
+    "estimated_hours": 30,
+    "difficulty": "intermediate"
+  },
+  "Docker": {
+    "resources": [
+      {"name": "Docker Mastery - Udemy", "url": "https://udemy.com/", "type": "course", "hours": 15, "cost": "paid"}
+    ],
+    "estimated_hours": 20,
+    "difficulty": "intermediate"
+  },
+  "AWS": {
+    "resources": [
+      {"name": "AWS Certified Solutions Architect Associate - Stephane Maarek", "url": "https://udemy.com/", "type": "course", "hours": 25, "cost": "paid"}
+    ],
+    "estimated_hours": 50,
+    "difficulty": "advanced"
+  },
+  "Kubernetes": {
+    "resources": [
+      {"name": "Kubernetes for the Absolute Beginners - Hands-on", "url": "https://udemy.com/", "type": "course", "hours": 12, "cost": "paid"}
+    ],
+    "estimated_hours": 30,
+    "difficulty": "advanced"
+  },
+  "Machine Learning": {
+    "resources": [
+      {"name": "Machine Learning Specialization - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 80, "cost": "free_audit"}
+    ],
+    "estimated_hours": 80,
+    "difficulty": "advanced"
+  },
+  "Deep Learning": {
+    "resources": [
+      {"name": "Deep Learning Specialization - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 100, "cost": "free_audit"}
+    ],
+    "estimated_hours": 100,
+    "difficulty": "advanced"
+  },
+  "Figma": {
+    "resources": [
+      {"name": "Figma UI UX Design Essentials - Udemy", "url": "https://udemy.com/", "type": "course", "hours": 15, "cost": "paid"}
+    ],
+    "estimated_hours": 20,
+    "difficulty": "beginner"
+  },
+  "Data Visualization": {
+    "resources": [
+      {"name": "Data Visualization with Python - IBM", "url": "https://coursera.org/", "type": "course", "hours": 18, "cost": "free_audit"}
+    ],
+    "estimated_hours": 18,
+    "difficulty": "intermediate"
+  },
+  "Tableau": {
+    "resources": [
+      {"name": "Tableau 2022 A-Z - Udemy", "url": "https://udemy.com/", "type": "course", "hours": 9, "cost": "paid"}
+    ],
+    "estimated_hours": 15,
+    "difficulty": "beginner"
+  },
+  "CI/CD": {
+    "resources": [
+      {"name": "Continuous Delivery & DevOps - Coursera", "url": "https://coursera.org/", "type": "course", "hours": 20, "cost": "free_audit"}
+    ],
+    "estimated_hours": 25,
+    "difficulty": "intermediate"
+  },
+  "Linux": {
+    "resources": [
+      {"name": "Linux Mastery: Master the Linux Command Line", "url": "https://udemy.com/", "type": "course", "hours": 11, "cost": "paid"}
+    ],
+    "estimated_hours": 20,
+    "difficulty": "beginner"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "software_engineer": {
+    "critical": ["Python", "Java", "JavaScript", "TypeScript", "C++", "SQL", "Git", "REST APIs", "Data Structures", "Algorithms", "Object-Oriented Programming"],
+    "important": ["React", "Node.js", "Docker", "AWS", "PostgreSQL", "Redis", "Microservices", "CI/CD", "Linux", "MongoDB", "Spring Boot", "Django", "Flask"],
+    "nice_to_have": ["Kubernetes", "GraphQL", "gRPC", "Kafka", "Elasticsearch", "Terraform", "Azure", "GCP", "WebSockets"]
+  },
+  "data_analyst": {
+    "critical": ["SQL", "Excel", "Python", "Tableau", "Power BI", "Data Cleaning", "Data Visualization", "Statistics", "A/B Testing", "Data Analysis"],
+    "important": ["R", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Google Analytics", "Looker", "ETL", "Dashboarding", "Storytelling", "Hypothesis Testing"],
+    "nice_to_have": ["Machine Learning Basics", "BigQuery", "Snowflake", "Redshift", "Jupyter Notebooks", "Airflow", "dbt", "Predictive Modeling", "SAS"]
+  },
+  "ml_engineer": {
+    "critical": ["Python", "Machine Learning", "Deep Learning", "PyTorch", "TensorFlow", "Scikit-Learn", "Mathematics", "Linear Algebra", "Calculus", "Algorithms"],
+    "important": ["SQL", "Pandas", "NumPy", "MLOps", "Model Deployment", "Docker", "AWS SageMaker", "Flask", "FastAPI", "Data Preprocessing", "Git", "Keras"],
+    "nice_to_have": ["NLP", "Computer Vision", "Hugging Face", "LLMs", "Kubernetes", "Kubeflow", "MLflow", "Spark", "Hadoop", "Reinforcement Learning"]
+  },
+  "web_developer": {
+    "critical": ["HTML", "CSS", "JavaScript", "React", "Vue.js", "Angular", "Responsive Design", "Web Accessibility", "Git", "DOM Manipulation"],
+    "important": ["TypeScript", "Node.js", "Express", "REST APIs", "WebPack", "Babel", "Tailwind CSS", "Bootstrap", "SASS", "LESS", "Figma", "Performance Optimization"],
+    "nice_to_have": ["Next.js", "Nuxt.js", "GraphQL", "PWA", "WebRTC", "Three.js", "Jest", "Cypress", "SEO", "WebAssembly"]
+  },
+  "cybersecurity": {
+    "critical": ["Network Security", "Cryptography", "Risk Management", "Linux", "Python", "Vulnerability Assessment", "Incident Response", "Penetration Testing", "Security Operations", "Firewalls"],
+    "important": ["SIEM", "Splunk", "Wireshark", "Metasploit", "Burp Suite", "Identity and Access Management (IAM)", "Cloud Security", "OWASP", "Malware Analysis", "Endpoint Security", "IDS/IPS"],
+    "nice_to_have": ["Reverse Engineering", "Digital Forensics", "Zero Trust Architecture", "DevSecOps", "ISO 27001", "NIST Framework", "Blockchain Security", "Threat Hunting"]
+  },
+  "cloud_engineer": {
+    "critical": ["AWS", "Azure", "GCP", "Linux", "Networking", "Security", "Infrastructure as Code (IaC)", "Terraform", "Cloud Architecture", "Docker"],
+    "important": ["Kubernetes", "CI/CD", "Jenkins", "Ansible", "Python", "Bash", "Shell Scripting", "Monitoring", "CloudWatch", "Prometheus", "Grafana", "Load Balancing"],
+    "nice_to_have": ["Serverless", "AWS Lambda", "Azure Functions", "CloudFormation", "Cost Optimization", "Site Reliability Engineering (SRE)", "Service Mesh", "Istio", "Pulumi"]
+  },
+  "ui_ux": {
+    "critical": ["Figma", "Wireframing", "Prototyping", "User Research", "User Testing", "Visual Design", "Interaction Design", "Information Architecture", "Typography", "Color Theory"],
+    "important": ["Adobe XD", "Sketch", "InVision", "Usability Testing", "Persona Development", "Journey Mapping", "HTML/CSS Basics", "Design Systems", "Accessibility (WCAG)", "Mobile App Design"],
+    "nice_to_have": ["Motion Design", "After Effects", "Framer", "Lottie", "3D Design", "Blender", "Voice UI", "AR/VR Design", "Data Visualization Design"]
+  },
+  "devops": {
+    "critical": ["Linux", "Git", "CI/CD", "Jenkins", "Docker", "Kubernetes", "Bash Scripting", "Python", "Networking", "Infrastructure as Code"],
+    "important": ["Terraform", "Ansible", "AWS", "Azure", "Monitoring", "Prometheus", "Grafana", "ELK Stack", "GitLab CI", "GitHub Actions", "Troubleshooting"],
+    "nice_to_have": ["Puppet", "Chef", "Vagrant", "Packer", "Datadog", "New Relic", "ArgoCD", "Vault", "Site Reliability Engineering", "Go"]
+  },
+  "general": {
+    "soft_skills": ["Communication", "Leadership", "Teamwork", "Problem Solving", "Critical Thinking", "Agile", "Scrum", "Time Management", "Adaptability", "Creativity", "Emotional Intelligence", "Conflict Resolution", "Negotiation", "Mentorship", "Public Speaking", "Work Ethic", "Attention to Detail", "Decision Making", "Active Listening", "Empathetic"]
+  }
+}

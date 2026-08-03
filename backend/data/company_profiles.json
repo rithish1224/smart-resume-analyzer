@@ -1,0 +1,211 @@
+{
+  "google": {
+    "display_name": "Google",
+    "aliases": ["google", "alphabet", "deepmind"],
+    "resume_tips": [
+      "Quantify all achievements with specific metrics (e.g., 'Reduced API latency by 40%')",
+      "Use STAR format for experience bullets (Situation, Task, Action, Result)",
+      "Highlight large-scale system design experience",
+      "Emphasize open-source contributions and personal projects",
+      "Include competitive programming achievements (Codeforces, LeetCode, etc.)"
+    ],
+    "preferred_skills": ["Python", "Go", "C++", "Distributed Systems", "MapReduce", "TensorFlow"],
+    "ats_keywords": ["scalable", "distributed", "machine learning", "open source", "impact"],
+    "resume_format": "1-page for <5yr experience, reverse-chronological, metrics-heavy"
+  },
+  "microsoft": {
+    "display_name": "Microsoft",
+    "aliases": ["microsoft", "msft"],
+    "resume_tips": [
+      "Highlight experience with enterprise software and scale",
+      "Focus on impact and team collaboration",
+      "Mention cloud experience (especially Azure)",
+      "Showcase adaptability and continuous learning"
+    ],
+    "preferred_skills": ["C#", ".NET", "C++", "Azure", "React", "TypeScript"],
+    "ats_keywords": ["enterprise", "azure", "scale", "collaboration", "leadership"]
+  },
+  "amazon": {
+    "display_name": "Amazon",
+    "aliases": ["amazon", "aws"],
+    "resume_tips": [
+      "Align every bullet point to one of Amazon's 16 Leadership Principles",
+      "Use CAR format (Challenge, Action, Result) for achievements",
+      "Quantify everything — Amazon values data-driven decisions",
+      "Include customer obsession stories in project descriptions",
+      "Highlight ownership of systems end-to-end"
+    ],
+    "preferred_skills": ["AWS", "Java", "Python", "Distributed Systems", "Microservices"],
+    "ats_keywords": ["ownership", "customer obsession", "data-driven", "scalability", "agile"]
+  },
+  "meta": {
+    "display_name": "Meta",
+    "aliases": ["meta", "facebook", "fb", "instagram", "whatsapp"],
+    "resume_tips": [
+      "Focus heavily on impact and fast-paced delivery",
+      "Highlight experience with large-scale consumer products",
+      "Showcase full-stack capabilities and independence",
+      "Emphasize data-driven product decisions"
+    ],
+    "preferred_skills": ["React", "PHP", "Hack", "Python", "C++", "GraphQL"],
+    "ats_keywords": ["impact", "scale", "consumer", "fast-paced", "data-driven"]
+  },
+  "apple": {
+    "display_name": "Apple",
+    "aliases": ["apple"],
+    "resume_tips": [
+      "Highlight attention to detail and user experience",
+      "Focus on quality and system-level programming",
+      "Showcase passion for Apple ecosystem if applicable",
+      "Emphasize privacy and security practices"
+    ],
+    "preferred_skills": ["Swift", "Objective-C", "C", "C++", "Hardware", "UX"],
+    "ats_keywords": ["quality", "detail", "performance", "security", "innovation"]
+  },
+  "netflix": {
+    "display_name": "Netflix",
+    "aliases": ["netflix"],
+    "resume_tips": [
+      "Highlight independent decision making and responsibility",
+      "Focus on high-availability and streaming technologies",
+      "Showcase experience with chaos engineering or resilient systems",
+      "Emphasize stunning colleagues culture fit"
+    ],
+    "preferred_skills": ["Java", "Python", "React", "AWS", "Microservices", "Data Engineering"],
+    "ats_keywords": ["resilience", "scale", "independence", "streaming", "availability"]
+  },
+  "tcs": {
+    "display_name": "TCS (Tata Consultancy Services)",
+    "aliases": ["tcs", "tata consultancy"],
+    "resume_tips": [
+      "Emphasize SDLC knowledge and software development lifecycle experience",
+      "Include client-facing project experience if any",
+      "Highlight certifications (especially Microsoft, AWS, Oracle)",
+      "Mention any cross-functional team collaboration",
+      "Include knowledge of agile/scrum methodologies"
+    ],
+    "preferred_skills": ["Java", "Python", "SQL", "Agile", "SDLC"],
+    "ats_keywords": ["client", "delivery", "agile", "process", "quality"]
+  },
+  "infosys": {
+    "display_name": "Infosys",
+    "aliases": ["infosys", "infy"],
+    "resume_tips": [
+      "Highlight versatility and willingness to learn new tech",
+      "Mention domain expertise (e.g., banking, retail, healthcare)",
+      "Showcase communication and team skills",
+      "Include training or mentoring experience"
+    ],
+    "preferred_skills": ["Java", ".NET", "SAP", "Oracle", "Angular"],
+    "ats_keywords": ["domain", "training", "versatile", "communication", "delivery"]
+  },
+  "wipro": {
+    "display_name": "Wipro",
+    "aliases": ["wipro"],
+    "resume_tips": [
+      "Focus on project delivery and adherence to timelines",
+      "Highlight any automation or process improvement",
+      "Showcase infrastructure or cloud migration experience",
+      "Include quality assurance or testing methodologies"
+    ],
+    "preferred_skills": ["Java", "Cloud", "Testing", "Automation", "SAP"],
+    "ats_keywords": ["automation", "migration", "quality", "timelines", "infrastructure"]
+  },
+  "accenture": {
+    "display_name": "Accenture",
+    "aliases": ["accenture"],
+    "resume_tips": [
+      "Highlight consulting experience and business acumen",
+      "Focus on digital transformation projects",
+      "Showcase leadership in strategy and implementation",
+      "Emphasize cross-industry experience"
+    ],
+    "preferred_skills": ["Consulting", "Cloud", "Salesforce", "SAP", "Strategy"],
+    "ats_keywords": ["transformation", "strategy", "consulting", "implementation", "business"]
+  },
+  "cognizant": {
+    "display_name": "Cognizant",
+    "aliases": ["cognizant", "cts"],
+    "resume_tips": [
+      "Emphasize problem-solving and analytical skills",
+      "Highlight modernization and legacy system upgrades",
+      "Showcase experience with data engineering and analytics",
+      "Include offshore/onshore team collaboration"
+    ],
+    "preferred_skills": ["Java", "Data Engineering", "Cloud", ".NET", "Testing"],
+    "ats_keywords": ["modernization", "analytics", "offshore", "collaboration", "upgrade"]
+  },
+  "zoho": {
+    "display_name": "Zoho",
+    "aliases": ["zoho"],
+    "resume_tips": [
+      "Highlight deep technical fundamentals over buzzwords",
+      "Showcase loyalty and long-term project commitment",
+      "Emphasize full-stack capabilities",
+      "Include product development from scratch"
+    ],
+    "preferred_skills": ["Java", "C++", "JavaScript", "SQL", "Product Development"],
+    "ats_keywords": ["fundamentals", "product", "full-stack", "commitment", "core"]
+  },
+  "flipkart": {
+    "display_name": "Flipkart",
+    "aliases": ["flipkart"],
+    "resume_tips": [
+      "Focus on high-scale distributed systems",
+      "Highlight experience with e-commerce or complex logistics",
+      "Showcase data structures and algorithm skills",
+      "Emphasize performance optimization"
+    ],
+    "preferred_skills": ["Java", "Spring Boot", "React", "Kafka", "NoSQL"],
+    "ats_keywords": ["e-commerce", "scale", "performance", "algorithms", "logistics"]
+  },
+  "swiggy": {
+    "display_name": "Swiggy",
+    "aliases": ["swiggy"],
+    "resume_tips": [
+      "Highlight experience with real-time systems and location services",
+      "Focus on optimization and rapid delivery",
+      "Showcase handling traffic spikes and high concurrency",
+      "Emphasize data-driven decision making"
+    ],
+    "preferred_skills": ["Golang", "Java", "Python", "React", "Redis"],
+    "ats_keywords": ["real-time", "concurrency", "optimization", "delivery", "scale"]
+  },
+  "ola": {
+    "display_name": "Ola",
+    "aliases": ["ola", "ola cabs", "ola electric"],
+    "resume_tips": [
+      "Highlight experience in fast-paced startup environments",
+      "Focus on mobility, maps, or hardware/EV tech if applicable",
+      "Showcase problem-solving under pressure",
+      "Emphasize operational efficiency"
+    ],
+    "preferred_skills": ["Java", "Python", "Go", "IoT", "Data Science"],
+    "ats_keywords": ["mobility", "efficiency", "fast-paced", "hardware", "scale"]
+  },
+  "paytm": {
+    "display_name": "Paytm",
+    "aliases": ["paytm", "one97"],
+    "resume_tips": [
+      "Highlight fintech experience and transaction handling",
+      "Focus on security and reliability at scale",
+      "Showcase integration with payment gateways",
+      "Emphasize building robust consumer apps"
+    ],
+    "preferred_skills": ["Java", "Node.js", "React", "Security", "Microservices"],
+    "ats_keywords": ["fintech", "security", "transactions", "reliability", "payments"]
+  },
+  "startup_generic": {
+    "display_name": "Generic Startup",
+    "aliases": [],
+    "resume_tips": [
+      "Show bias for action and ownership of entire features end-to-end",
+      "Highlight fast learning and adaptability across tech stacks",
+      "Mention startup/hackathon experience prominently",
+      "Include GitHub profile link with active repositories",
+      "Show product thinking in project descriptions, not just engineering"
+    ],
+    "preferred_skills": ["React", "Node.js", "Python", "AWS", "Docker", "MongoDB"],
+    "ats_keywords": ["ownership", "end-to-end", "agile", "product", "adaptability"]
+  }
+}

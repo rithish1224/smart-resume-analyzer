@@ -1,0 +1,50 @@
+{
+  "software_engineer": {
+    "high_value": ["developed", "implemented", "optimized", "designed", "architected", "deployed", "led", "built", "scalable", "microservices", "api", "cloud"],
+    "action_verbs": ["Developed", "Engineered", "Implemented", "Optimized", "Designed", "Architected", "Deployed", "Integrated", "Refactored", "Automated"],
+    "weak_phrases": ["worked on", "helped with", "assisted in", "was responsible for", "participated in"],
+    "measurement_patterns": ["reduced by %", "improved by %", "increased throughput", "saved $", "handling X requests"]
+  },
+  "data_analyst": {
+    "high_value": ["analyzed", "visualized", "dashboard", "sql", "tableau", "insights", "metrics", "reporting", "a/b testing", "data modeling"],
+    "action_verbs": ["Analyzed", "Visualized", "Extracted", "Modeled", "Forecasted", "Optimized", "Synthesized", "Reported", "Discovered", "Tracked"],
+    "weak_phrases": ["looked at", "helped with data", "made charts", "was responsible for reports", "participated in analysis"],
+    "measurement_patterns": ["increased revenue by %", "reduced costs by %", "improved accuracy by %", "processed X records", "automated reporting saving X hours"]
+  },
+  "ml_engineer": {
+    "high_value": ["trained", "deployed", "model", "tensorflow", "pytorch", "pipeline", "nlp", "computer vision", "accuracy", "inference"],
+    "action_verbs": ["Trained", "Deployed", "Fine-tuned", "Architected", "Evaluated", "Optimized", "Engineered", "Implemented", "Scaled", "Automated"],
+    "weak_phrases": ["worked on models", "helped with training", "used machine learning", "participated in ml", "did data science"],
+    "measurement_patterns": ["improved accuracy by %", "reduced inference time by %", "increased F1 score by %", "processed X TB of data", "deployed to production"]
+  },
+  "web_developer": {
+    "high_value": ["frontend", "backend", "react", "responsive", "ui", "api", "node", "javascript", "css", "accessible"],
+    "action_verbs": ["Developed", "Built", "Designed", "Integrated", "Optimized", "Styled", "Refactored", "Tested", "Deployed", "Animated"],
+    "weak_phrases": ["worked on website", "helped make pages", "did frontend", "participated in web", "made things look good"],
+    "measurement_patterns": ["improved load time by %", "increased conversion rate by %", "reduced bundle size by %", "served X users", "achieved 100 lighthouse score"]
+  },
+  "cybersecurity": {
+    "high_value": ["security", "vulnerability", "penetration testing", "incident response", "firewall", "encryption", "compliance", "audit", "threat", "mitigation"],
+    "action_verbs": ["Secured", "Audited", "Mitigated", "Investigated", "Configured", "Hardened", "Monitored", "Analyzed", "Prevented", "Detected"],
+    "weak_phrases": ["worked on security", "helped with firewall", "looked for bugs", "participated in audit", "kept things safe"],
+    "measurement_patterns": ["reduced vulnerabilities by %", "responded to X incidents", "achieved compliance", "blocked X attacks", "saved $X in potential losses"]
+  },
+  "cloud_engineer": {
+    "high_value": ["aws", "azure", "gcp", "infrastructure as code", "terraform", "kubernetes", "migration", "scaling", "serverless", "vpc"],
+    "action_verbs": ["Migrated", "Provisioned", "Automated", "Architected", "Deployed", "Scaled", "Configured", "Monitored", "Secured", "Optimized"],
+    "weak_phrases": ["worked on cloud", "helped with aws", "put things on servers", "participated in migration", "managed servers"],
+    "measurement_patterns": ["reduced infrastructure costs by %", "achieved 99.99% uptime", "migrated X servers", "automated X processes", "decreased deployment time by %"]
+  },
+  "ui_ux": {
+    "high_value": ["user research", "wireframing", "prototyping", "figma", "usability testing", "accessibility", "interaction design", "user flow", "personas", "mockups"],
+    "action_verbs": ["Designed", "Prototyped", "Researched", "Tested", "Wireframed", "Iterated", "Collaborated", "Conceptualized", "Mapped", "Evaluated"],
+    "weak_phrases": ["worked on design", "helped make it pretty", "did ui", "participated in research", "made screens"],
+    "measurement_patterns": ["increased user engagement by %", "reduced bounce rate by %", "improved task completion rate by %", "conducted X user interviews", "redesigned X screens"]
+  },
+  "devops": {
+    "high_value": ["ci/cd", "jenkins", "docker", "kubernetes", "pipeline", "automation", "monitoring", "ansible", "git", "deployment"],
+    "action_verbs": ["Automated", "Deployed", "Configured", "Orchestrated", "Streamlined", "Monitored", "Integrated", "Provisioned", "Maintained", "Troubleshot"],
+    "weak_phrases": ["worked on pipelines", "helped deploy", "managed jenkins", "participated in devops", "ran scripts"],
+    "measurement_patterns": ["reduced deployment time by %", "increased release frequency by X", "achieved X% uptime", "automated X hours of manual work", "cut build time by %"]
+  }
+}

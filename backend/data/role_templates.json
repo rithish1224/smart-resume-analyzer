@@ -1,0 +1,58 @@
+{
+  "software_engineer": {
+    "required_years": 3,
+    "min_education": "BTech",
+    "critical_skills": ["Python", "Data Structures", "SQL", "Git", "Java"],
+    "preferred_certs": ["AWS Certified Developer", "Oracle Java Certification", "Microsoft Certified: Azure Developer Associate"],
+    "competency_weights": {"technical": 0.40, "experience": 0.30, "education": 0.15, "projects": 0.10, "certifications": 0.05}
+  },
+  "data_analyst": {
+    "required_years": 2,
+    "min_education": "BSc",
+    "critical_skills": ["SQL", "Excel", "Python", "Tableau", "Data Visualization"],
+    "preferred_certs": ["Google Data Analytics Professional Certificate", "Microsoft Certified: Data Analyst Associate"],
+    "competency_weights": {"technical": 0.45, "experience": 0.25, "education": 0.15, "projects": 0.10, "certifications": 0.05}
+  },
+  "ml_engineer": {
+    "required_years": 4,
+    "min_education": "MTech",
+    "critical_skills": ["Python", "Machine Learning", "PyTorch", "TensorFlow", "Scikit-Learn"],
+    "preferred_certs": ["AWS Certified Machine Learning", "Google Cloud Professional Machine Learning Engineer"],
+    "competency_weights": {"technical": 0.45, "experience": 0.20, "education": 0.20, "projects": 0.10, "certifications": 0.05}
+  },
+  "web_developer": {
+    "required_years": 2,
+    "min_education": "Diploma",
+    "critical_skills": ["HTML", "CSS", "JavaScript", "React", "Git"],
+    "preferred_certs": ["Meta Front-End Developer Professional Certificate", "FreeCodeCamp Certifications"],
+    "competency_weights": {"technical": 0.40, "experience": 0.30, "education": 0.10, "projects": 0.15, "certifications": 0.05}
+  },
+  "cybersecurity": {
+    "required_years": 3,
+    "min_education": "BTech",
+    "critical_skills": ["Network Security", "Linux", "Python", "Vulnerability Assessment", "Firewalls"],
+    "preferred_certs": ["CompTIA Security+", "CISSP", "CEH (Certified Ethical Hacker)"],
+    "competency_weights": {"technical": 0.35, "experience": 0.30, "education": 0.10, "projects": 0.05, "certifications": 0.20}
+  },
+  "cloud_engineer": {
+    "required_years": 4,
+    "min_education": "BTech",
+    "critical_skills": ["AWS", "Linux", "Networking", "Terraform", "Docker"],
+    "preferred_certs": ["AWS Certified Solutions Architect", "Google Cloud Professional Cloud Architect"],
+    "competency_weights": {"technical": 0.40, "experience": 0.30, "education": 0.10, "projects": 0.05, "certifications": 0.15}
+  },
+  "ui_ux": {
+    "required_years": 2,
+    "min_education": "BDes",
+    "critical_skills": ["Figma", "Wireframing", "User Research", "Visual Design", "Prototyping"],
+    "preferred_certs": ["Google UX Design Professional Certificate", "Nielsen Norman Group UX Certification"],
+    "competency_weights": {"technical": 0.40, "experience": 0.25, "education": 0.15, "projects": 0.15, "certifications": 0.05}
+  },
+  "devops": {
+    "required_years": 4,
+    "min_education": "BTech",
+    "critical_skills": ["Linux", "CI/CD", "Docker", "Kubernetes", "Infrastructure as Code"],
+    "preferred_certs": ["Certified Kubernetes Administrator (CKA)", "AWS Certified DevOps Engineer"],
+    "competency_weights": {"technical": 0.45, "experience": 0.35, "education": 0.10, "projects": 0.05, "certifications": 0.05}
+  }
+}
