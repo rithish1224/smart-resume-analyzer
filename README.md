@@ -149,20 +149,22 @@ The core of our evaluation system uses `XGBRanker` to learn the relative importa
 
 ### Features
 
-The model utilizes over 20 structured features, including:
-- Years of Experience
-- Education Level
-- Skill Match Percentage
-- Certifications Count
-- Keyword Frequency
-- Management Experience
-- Domain Expertise Flags
+The baseline model uses these five structured features:
+- `exp_years`
+- `skill_match_ratio`
+- `num_projects`
+- `num_certs`
+- `gpa`
+
+Training and evaluation currently use synthetic data: 500 profiles generated
+across 8 domains.
 
 ### Proxy Label Strategy
 Due to the lack of historical hiring data at startup, proxy labels (scores 1-5) are programmatically assigned based on heuristic rules simulating senior technical recruiters.
 
 ### Training Data
-The model is trained on **500+ synthetic profiles** generated across 8 different domains (e.g., Data Science, Backend Dev, DevOps).
+The model is trained on **500 synthetic profiles** generated across 8 different
+domains (e.g., Data Science, Backend Dev, DevOps).
 
 ---
 
