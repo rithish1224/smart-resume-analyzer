@@ -24,7 +24,11 @@ export default function SkillGapChart({ matchedSkills = [], missingSkills = [], 
             <div className="flex flex-wrap gap-2 mt-3">
               {skills.length ? skills.map(skill => (
                 <span key={skill} className="px-2 py-1 rounded-full bg-black/20 text-xs text-slate-200">{skill}</span>
-              )) : <span className="text-xs text-slate-400">None reported</span>}
+              )) : <span className="text-xs text-slate-400">
+                {label === 'Missing skills' ? 'No gaps found against this job description' :
+                  label === 'Related / learning skills' ? 'No related or learning skills reported' :
+                    'No matched skills reported'}
+              </span>}
             </div>
           </div>
         ))}

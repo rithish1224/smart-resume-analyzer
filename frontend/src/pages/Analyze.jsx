@@ -171,7 +171,7 @@ const Analyze = () => {
                            <ul className="list-disc pl-5 text-gray-300 space-y-2 text-sm">
                              {analysisResult.improvement_suggestions.map((suggestion, index) => <li key={index}>{suggestion}</li>)}
                            </ul>
-                         ) : <p className="text-slate-400 text-sm">No improvement suggestions were returned.</p>}
+                         ) : <p className="text-slate-400 text-sm">No improvement suggestions returned for this resume and job description.</p>}
                     </div>
                 </div>
             </div>

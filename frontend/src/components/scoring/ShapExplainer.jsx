@@ -125,6 +125,7 @@ export default function ShapExplainer({ shapData }) {
       <div className="mt-8 bg-white/5 border border-white/10 p-4 rounded-xl">
         <p className="text-sm text-slate-400 leading-relaxed">
           Units: impact on score (log-odds). JD-only and text-length features are excluded from this candidate-facing view.
+          Job-description and length features are used by the model but not shown here.
         </p>
       </div>
     </motion.div>
