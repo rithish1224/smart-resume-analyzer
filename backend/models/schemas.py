@@ -56,6 +56,10 @@ class ScoreResponse(BaseModel):
     confidence_score: float
     shortlist_decision: str
     competency_scores: Dict[str, float] = {}
+    model_version: Optional[str] = None
+    top_positive_features: List[Dict[str, Any]] = []
+    top_negative_features: List[Dict[str, Any]] = []
+    missing_skill_improvements: List[str] = []
     rule_scores: Dict[str, float] = {}
     created_at: datetime = Field(default_factory=datetime.utcnow)
 

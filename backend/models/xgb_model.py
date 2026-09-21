@@ -3,7 +3,7 @@ import json
 import logging
 import xgboost as xgb
 import pandas as pd
-from typing import Tuple
+from typing import Any, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +12,10 @@ class XGBRankerModel:
     
     def __init__(self):
         self.model: xgb.Booster | None = None
+        self.classifier: Any | None = None
         self.feature_names: list[str] = []
         self.version: str = ''
+        self.model_kind: str = "ranker"
         
     def load(self, model_path: str) -> bool:
         """Load the XGBoost model from the specified path."""
@@ -22,8 +24,22 @@ class XGBRankerModel:
                 logger.warning(f"Model path does not exist: {model_path}")
                 return False
                 
-            self.model = xgb.Booster()
-            self.model.load_model(model_path)
+            metadata_path = os.path.join(os.path.dirname(model_path), "model_version.json")
+            metadata = {}
+            if os.path.exists(metadata_path):
+                with open(metadata_path, 'r', encoding='utf-8') as f:
+                    metadata = json.load(f)
+
+            if metadata.get("model_type") == "XGBClassifier":
+                self.classifier = xgb.XGBClassifier()
+                self.classifier.load_model(model_path)
+                self.model = None
+                self.model_kind = "classifier"
+            else:
+                self.model = xgb.Booster()
+                self.model.load_model(model_path)
+                self.classifier = None
+                self.model_kind = "ranker"
             
             # Assuming we save some metadata along with the model
             meta_path = model_path.replace('.json', '_meta.json')
@@ -31,10 +47,14 @@ class XGBRankerModel:
                 with open(meta_path, 'r') as f:
                     meta = json.load(f)
                     self.feature_names = meta.get('feature_names', [])
-                    self.version = meta.get('version', 'unknown')
+                    self.version = meta.get('version', metadata.get('version', 'unknown'))
             else:
-                self.feature_names = self.model.feature_names or []
-                self.version = "1.0.0"
+                self.feature_names = (
+                    getattr(self.classifier, "feature_names_in_", None)
+                    or getattr(self.model, "feature_names", None)
+                    or metadata.get("features", [])
+                )
+                self.version = metadata.get("version", "1.0.0")
                 
             logger.info(f"Loaded XGBRanker model v{self.version} from {model_path}")
             return True
@@ -52,6 +72,12 @@ class XGBRankerModel:
             raise ValueError("Model is not loaded. Call load() first.")
             
         try:
+            if self.classifier is not None:
+                raw_scores = self.classifier.predict_proba(features)[:, 1]
+                score_100 = float(raw_scores[0]) * 100
+                confidence = abs(float(raw_scores[0]) - 0.5) * 2
+                return round(score_100, 2), round(confidence, 4)
+
             dmatrix = xgb.DMatrix(features)
             raw_scores = self.model.predict(dmatrix)
             
@@ -84,7 +110,7 @@ class XGBRankerModel:
             
     def is_loaded(self) -> bool:
         """Check if the model is currently loaded."""
-        return self.model is not None
+        return self.model is not None or self.classifier is not None
 
 # Singleton instance
 xgb_model = XGBRankerModel()

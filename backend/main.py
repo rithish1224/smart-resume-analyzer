@@ -45,10 +45,17 @@ async def lifespan(app: FastAPI):
     try:
         from backend.models.xgb_model import xgb_model
         from backend.config import settings
-        if os.path.exists(settings.MODEL_PATH):
-            loaded = xgb_model.load(settings.MODEL_PATH)
+        v2_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "models",
+            "trained",
+            "xgb_ranker_v2.json",
+        )
+        model_path = v2_path if os.path.exists(v2_path) else settings.MODEL_PATH
+        if os.path.exists(model_path):
+            loaded = xgb_model.load(model_path)
             if loaded:
-                logger.info(f"✅ XGBoost model loaded: {settings.MODEL_PATH}")
+                logger.info(f"✅ XGBoost model loaded: {model_path}")
             else:
                 logger.warning("⚠️  XGBoost model load failed — using rule-based only")
         else:
