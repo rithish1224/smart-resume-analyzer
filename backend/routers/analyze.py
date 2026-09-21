@@ -1,0 +1,159 @@
+"""Part B resume analysis endpoint.
+
+This router is additive: the existing v1 upload and score routes remain
+unchanged while this endpoint composes the current parser with a small,
+deterministic scoring fallback.
+"""
+import re
+import time
+import json
+import pickle
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+
+from backend.config import settings
+from backend.services.parser import ResumeParser
+
+router = APIRouter()
+
+_SKILL_RE = re.compile(
+    r"\b(python|java|c\+\+|javascript|typescript|sql|nosql|machine learning|"
+    r"deep learning|fastapi|django|react|aws|azure|gcp|docker|kubernetes|"
+    r"terraform|pandas|numpy|spark|git|api|rest|graphql)\b",
+    re.IGNORECASE,
+)
+_parser: Optional[ResumeParser] = None
+_v2_model = None
+_v2_calibrator = None
+_v2_features: Optional[List[str]] = None
+
+
+def _load_v2():
+    global _v2_model, _v2_calibrator, _v2_features
+    if _v2_model is not None:
+        return
+    model_path = Path(__file__).resolve().parents[1] / "models" / "trained" / "xgb_ranker_v2.json"
+    metadata_path = Path(__file__).resolve().parents[1] / "models" / "trained" / "v2" / "model_version.json"
+    if not model_path.exists():
+        return
+    try:
+        import xgboost as xgb
+        _v2_model = xgb.XGBClassifier()
+        _v2_model.load_model(str(model_path))
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        _v2_features = metadata.get("features", [])
+        calibrator_path = metadata_path.parent / "isotonic_calibrator.pkl"
+        if calibrator_path.exists():
+            with calibrator_path.open("rb") as handle:
+                _v2_calibrator = pickle.load(handle)
+    except (OSError, ValueError, ImportError):
+        _v2_model = None
+
+
+def _get_parser() -> ResumeParser:
+    global _parser
+    if _parser is None:
+        _parser = ResumeParser()
+    return _parser
+
+
+def _skills(text: str) -> List[str]:
+    return sorted({match.group(0).lower() for match in _SKILL_RE.finditer(text or "")})
+
+
+def _model_version() -> str:
+    metadata = Path(__file__).resolve().parents[1] / "models" / "trained" / "v2" / "model_version.json"
+    if metadata.exists():
+        try:
+            return str(json.loads(metadata.read_text(encoding="utf-8")).get("version", "2.0"))
+        except (OSError, ValueError):
+            pass
+    return getattr(settings, "MODEL_VERSION", "v1")
+
+
+def _score(profile: Any, jd_text: str) -> Dict[str, Any]:
+    resume_skills = set(getattr(profile, "skills", []) or [])
+    jd_skills = set(_skills(jd_text))
+    matched = sorted(resume_skills.intersection(jd_skills))
+    missing = sorted(jd_skills - resume_skills)
+    score = round((len(matched) / len(jd_skills) * 70 if jd_skills else 50) +
+                  (20 if getattr(profile, "experience", []) else 10) +
+                  (10 if getattr(profile, "education", []) else 5), 2)
+    _load_v2()
+    if _v2_model is not None:
+        try:
+            from ml_training.train_real import extract_pair_features
+            import pandas as pd
+            row = pd.DataFrame([{
+                "resume_text": getattr(profile, "raw_text", "") or "",
+                "job_description_text": jd_text,
+                "resume_id": "request-resume",
+                "job_id": "request-job",
+            }])
+            pair_features, _ = extract_pair_features(row, use_embeddings=False)
+            for feature in (_v2_features or []):
+                if feature not in pair_features:
+                    pair_features[feature] = 0.0
+            pair_features = pair_features[_v2_features].fillna(0.0)
+            probability = float(_v2_model.predict_proba(pair_features)[0, 1])
+            if _v2_calibrator is not None:
+                probability = float(_v2_calibrator.predict([probability])[0])
+            score = round(max(0.0, min(100.0, probability * 100.0)), 2)
+        except (ImportError, ValueError, KeyError, OSError):
+            pass
+    score = min(100.0, score)
+    related = sorted(set(_skills(getattr(profile, "raw_text", ""))) - set(matched) - set(missing))
+    competency = {
+        "technical": round((len(matched) / len(jd_skills) * 100) if jd_skills else 50, 2),
+        "experience": 50.0 if getattr(profile, "experience", []) else 25.0,
+        "education": 50.0 if getattr(profile, "education", []) else 25.0,
+    }
+    positive = [{"feature": "matched_skills", "value": len(matched)}] if matched else []
+    negative = [{"feature": "missing_skills", "value": -len(missing)}] if missing else []
+    return {
+        "fit_score": score,
+        "confidence": round(min(0.99, 0.5 + abs(score - 50) / 100), 3),
+        "competency_scores": competency,
+        "matched_skills": matched,
+        "missing_skills": missing,
+        "related_skills": related,
+        "shap_top_positive": positive,
+        "shap_top_negative": negative,
+        "improvement_suggestions": [f"Add evidence of {skill} to the resume." for skill in missing[:5]],
+    }
+
+
+@router.post("/analyze")
+async def analyze_resume(
+    resume: UploadFile = File(...),
+    jd_text: str = Form(...),
+    role: str = Form(""),
+):
+    started = time.perf_counter()
+    if not resume.filename:
+        raise HTTPException(status_code=400, detail="Resume filename is required")
+    try:
+        content = await resume.read()
+        if not content:
+            raise ValueError("Resume file is empty")
+        profile = await _get_parser().parse(content, resume.filename)
+    except (ValueError, UnicodeError) as exc:
+        raise HTTPException(status_code=422, detail=f"Resume parse error: {exc}") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=f"Resume parse error: {exc}") from exc
+
+    result = _score(profile, jd_text)
+    result.update({
+        "model_version": _model_version(),
+        "latency_ms": round((time.perf_counter() - started) * 1000, 2),
+        "candidate_name": getattr(profile, "name", None),
+        "role": role,
+    })
+    return result
+
+
+def set_app(app: Any) -> None:
+    """Attach the FastAPI app so model version can be surfaced when available."""
+    _model_version.app = app

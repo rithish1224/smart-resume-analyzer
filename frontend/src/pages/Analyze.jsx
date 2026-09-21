@@ -9,11 +9,14 @@ import ShapExplainer from '../components/scoring/ShapExplainer';
 import ShortlistDecision from '../components/scoring/ShortlistDecision';
 import ResumeImprovementPanel from '../components/improvement/ResumeImprovementPanel';
 import toast from 'react-hot-toast';
+import { analyzeApi } from '../api/client';
 
 const Analyze = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const loadingSteps = ['Parsing resume...', 'Extracting skills...', 'Running XGBoost...', 'Computing SHAP...', 'Done!'];
 
@@ -56,21 +59,44 @@ const Analyze = () => {
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async ({ role, jd }) => {
+    if (!resumeFile) {
+      toast.error('Please upload a resume first.');
+      setStep(1);
+      return;
+    }
     setIsLoading(true);
     setStep(3);
-    let currentStep = 0;
-    const interval = setInterval(() => {
-      currentStep++;
-      if (currentStep < loadingSteps.length) {
-        setLoadingStep(currentStep);
-      } else {
-        clearInterval(interval);
-        setIsLoading(false);
-        setStep(4);
-      }
-    }, 1000);
+    setLoadingStep(0);
+    try {
+      const { data } = await analyzeApi.analyze(resumeFile, jd, role);
+      setAnalysisResult(data);
+      setStep(4);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Analysis failed. Please check the resume.');
+      setStep(2);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const result = analysisResult || mockAnalysisData;
+  const displayData = analysisResult ? {
+    ...mockAnalysisData,
+    score: analysisResult.fit_score,
+    confidence: analysisResult.confidence,
+    modelVersion: analysisResult.model_version,
+    competencyScores: analysisResult.competency_scores,
+    skillGaps: (analysisResult.missing_skills || []).map((skill) => ({
+      skillName: skill, requiredLevel: 1, candidateLevel: 0, priority: 'High', status: 'hard',
+    })),
+    shapData: {
+      features: [...(analysisResult.shap_top_positive || []), ...(analysisResult.shap_top_negative || [])]
+        .map((item) => ({ name: item.feature, contribution: item.value, evidence: '' })),
+      summary: (analysisResult.improvement_suggestions || []).join(' '),
+    },
+    shortlistDecision: analysisResult.fit_score >= 75 ? 'SHORTLIST' : analysisResult.fit_score >= 50 ? 'REVIEW' : 'REJECT',
+  } : result;
 
   const handleExport = () => {
     toast.success('Exporting detailed candidate evaluation report...');
@@ -106,7 +132,7 @@ const Analyze = () => {
                     <h2 className="text-3xl font-outfit font-bold mb-2">Upload Candidate Resume</h2>
                     <p className="text-gray-400 text-sm">Upload resume PDF, DOCX, image, or TXT file for automated extraction.</p>
                 </div>
-                <UploadPanel onUploadComplete={() => setStep(2)} />
+                <UploadPanel onUploadComplete={(file) => { setResumeFile(file); setStep(2); }} />
                 <div className="text-center pt-2">
                   <button onClick={() => setStep(2)} className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors border border-white/20 text-xs font-medium text-gray-300">
                       Skip to Role Configuration (Demo) →
@@ -146,30 +172,30 @@ const Analyze = () => {
                     {/* Row 1: Score Summary & Competency Radar */}
                     <div className="md:col-span-1">
                         <ScoreSummary 
-                          score={mockAnalysisData.score} 
-                          confidence={mockAnalysisData.confidence} 
-                          shortlistDecision={mockAnalysisData.shortlistDecision} 
-                          modelVersion={mockAnalysisData.modelVersion} 
+                          score={displayData.score} 
+                          confidence={displayData.confidence} 
+                          shortlistDecision={displayData.shortlistDecision} 
+                          modelVersion={displayData.modelVersion} 
                         />
                     </div>
                     <div className="md:col-span-2">
                         <CompetencyRadar 
-                          competencyScores={mockAnalysisData.competencyScores} 
-                          requiredScores={mockAnalysisData.requiredScores} 
+                          competencyScores={displayData.competencyScores} 
+                          requiredScores={displayData.requiredScores} 
                         />
                     </div>
 
                     {/* Row 2: Skill Gap Chart */}
                     <div className="md:col-span-3 min-h-[300px]">
-                        <SkillGapChart skillGaps={mockAnalysisData.skillGaps} />
+                        <SkillGapChart skillGaps={displayData.skillGaps} />
                     </div>
 
                     {/* Row 3: SHAP Explainer & Shortlist Recommendation */}
                     <div className="md:col-span-2">
-                        <ShapExplainer shapData={mockAnalysisData.shapData} />
+                        <ShapExplainer shapData={displayData.shapData} />
                     </div>
                     <div className="md:col-span-1">
-                        <ShortlistDecision decision={mockAnalysisData.shortlistDecision} score={mockAnalysisData.score} />
+                        <ShortlistDecision decision={displayData.shortlistDecision} score={displayData.score} />
                     </div>
 
                     {/* Row 4: Fairness Audit */}

@@ -5,7 +5,7 @@ import docx
 import spacy
 from typing import Optional, List, Dict, Any
 from backend.services.ocr_service import OCRService
-from backend.schemas import CandidateProfileSchema
+from backend.models.schemas import CandidateProfileSchema
 
 class ResumeParser:
     def __init__(self):
@@ -13,8 +13,8 @@ class ResumeParser:
             self.nlp = spacy.load("en_core_web_sm")
         except OSError:
             # Fallback if model not downloaded
-            import spacy.cli
-            spacy.cli.download("en_core_web_sm")
+            import spacy.cli as spacy_cli
+            spacy_cli.download("en_core_web_sm")
             self.nlp = spacy.load("en_core_web_sm")
         
         self.ocr_service = OCRService()

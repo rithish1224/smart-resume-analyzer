@@ -45,6 +45,18 @@ export const uploadApi = {
   uploadResume: (data) => apiClient.post('/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
 };
 
+export const analyzeApi = {
+  analyze: (file, jdText, role = '') => {
+    const form = new FormData();
+    form.append('resume', file);
+    form.append('jd_text', jdText);
+    form.append('role', role);
+    return apiClient.post('/analyze', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
 export const roadmapApi = {
   getRoadmap: (id) => apiClient.get(`/roadmap/${id}`),
   generateRoadmap: (data) => apiClient.post('/roadmap', data),

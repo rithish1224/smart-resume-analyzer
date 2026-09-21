@@ -66,6 +66,14 @@ async def lifespan(app: FastAPI):
         logger.error(f"❌ XGBoost load error: {e}")
         app.state.xgb_model = None
 
+    try:
+        from backend.routers.analyze import _get_parser, _load_v2
+        app.state.resume_parser = _get_parser()
+        _load_v2()
+        logger.info("✅ v2 analysis assets loaded")
+    except Exception as e:
+        logger.warning(f"⚠️  v2 analysis assets unavailable: {e}")
+
     logger.info("🎯 Startup complete. API ready at http://localhost:8000")
     logger.info("📚 Swagger docs: http://localhost:8000/api/docs")
 
@@ -124,7 +132,7 @@ if os.path.exists("uploads"):
     app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # ── Include Routers ────────────────────────────────────────────────────────────
-from backend.routers import auth, upload, score, explain, fairness, compare, roadmap, export, admin
+from backend.routers import auth, upload, score, explain, fairness, compare, roadmap, export, admin, analyze, jobs
 from backend.routers import improve  # ← Resume Improvement Module (additive)
 
 app.include_router(auth.router,     prefix="/api/auth",     tags=["Authentication"])
@@ -137,6 +145,8 @@ app.include_router(roadmap.router,  prefix="/api/roadmap",  tags=["AI Roadmap"])
 app.include_router(export.router,   prefix="/api/export",   tags=["Export"])
 app.include_router(admin.router,    prefix="/api/admin",    tags=["Admin"])
 app.include_router(improve.router,  prefix="/api/improve",  tags=["Resume Improvement"])  # ← NEW
+app.include_router(analyze.router, prefix="/api", tags=["Part B Analysis"])
+app.include_router(jobs.router, prefix="/api", tags=["Jobs and Candidates"])
 
 # ── Exception Handlers ─────────────────────────────────────────────────────────
 @app.exception_handler(404)
@@ -177,7 +187,7 @@ async def health_check():
     return {
         "status": "healthy",
         "version": settings.APP_VERSION,
-        "model_version": settings.MODEL_VERSION,
+        "model_version": getattr(getattr(app.state, "xgb_model", None), "version", None) or settings.MODEL_VERSION,
         "model_loaded": model_loaded,
         "spacy_loaded": hasattr(app.state, "nlp") and app.state.nlp is not None,
         "db_status": "connected",
