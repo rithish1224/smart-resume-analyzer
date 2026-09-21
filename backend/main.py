@@ -67,9 +67,10 @@ async def lifespan(app: FastAPI):
         app.state.xgb_model = None
 
     try:
-        from backend.routers.analyze import _get_parser, _load_v2
+        from backend.routers.analyze import _get_parser, _load_v2, load_embedding_model
         app.state.resume_parser = _get_parser()
         _load_v2()
+        load_embedding_model()
         logger.info("✅ v2 analysis assets loaded")
     except Exception as e:
         logger.warning(f"⚠️  v2 analysis assets unavailable: {e}")

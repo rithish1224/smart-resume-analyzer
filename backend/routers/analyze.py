@@ -1,8 +1,7 @@
 """Part B resume analysis endpoint.
 
 This router is additive: the existing v1 upload and score routes remain
-unchanged while this endpoint composes the current parser with a small,
-deterministic scoring fallback.
+unchanged while this endpoint composes the current parser with v2 inference.
 """
 import re
 import time
@@ -28,10 +27,13 @@ _parser: Optional[ResumeParser] = None
 _v2_model = None
 _v2_calibrator = None
 _v2_features: Optional[List[str]] = None
+_v2_vectorizer = None
+_embedding_model = None
+_shap_explainer = None
 
 
 def _load_v2():
-    global _v2_model, _v2_calibrator, _v2_features
+    global _v2_model, _v2_calibrator, _v2_features, _v2_vectorizer, _shap_explainer
     if _v2_model is not None:
         return
     model_path = Path(__file__).resolve().parents[1] / "models" / "trained" / "xgb_ranker_v2.json"
@@ -42,14 +44,29 @@ def _load_v2():
         import xgboost as xgb
         _v2_model = xgb.XGBClassifier()
         _v2_model.load_model(str(model_path))
+        import shap
+        _shap_explainer = shap.TreeExplainer(_v2_model)
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         _v2_features = metadata.get("features", [])
+        feature_metadata_path = metadata_path.parent / "feature_metadata.pkl"
+        if feature_metadata_path.exists():
+            with feature_metadata_path.open("rb") as handle:
+                _v2_vectorizer = pickle.load(handle).get("vectorizer")
         calibrator_path = metadata_path.parent / "isotonic_calibrator.pkl"
         if calibrator_path.exists():
             with calibrator_path.open("rb") as handle:
                 _v2_calibrator = pickle.load(handle)
-    except (OSError, ValueError, ImportError):
+    except (OSError, ValueError, ImportError) as exc:
         _v2_model = None
+        raise RuntimeError(f"Unable to load v2 analysis assets: {exc}") from exc
+
+
+def load_embedding_model() -> None:
+    global _embedding_model
+    if _embedding_model is not None:
+        return
+    from sentence_transformers import SentenceTransformer
+    _embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 
 def _get_parser() -> ResumeParser:
@@ -78,40 +95,53 @@ def _score(profile: Any, jd_text: str) -> Dict[str, Any]:
     jd_skills = set(_skills(jd_text))
     matched = sorted(resume_skills.intersection(jd_skills))
     missing = sorted(jd_skills - resume_skills)
-    score = round((len(matched) / len(jd_skills) * 70 if jd_skills else 50) +
-                  (20 if getattr(profile, "experience", []) else 10) +
-                  (10 if getattr(profile, "education", []) else 5), 2)
     _load_v2()
-    if _v2_model is not None:
-        try:
-            from ml_training.train_real import extract_pair_features
-            import pandas as pd
-            row = pd.DataFrame([{
-                "resume_text": getattr(profile, "raw_text", "") or "",
-                "job_description_text": jd_text,
-                "resume_id": "request-resume",
-                "job_id": "request-job",
-            }])
-            pair_features, _ = extract_pair_features(row, use_embeddings=False)
-            for feature in (_v2_features or []):
-                if feature not in pair_features:
-                    pair_features[feature] = 0.0
-            pair_features = pair_features[_v2_features].fillna(0.0)
-            probability = float(_v2_model.predict_proba(pair_features)[0, 1])
-            if _v2_calibrator is not None:
-                probability = float(_v2_calibrator.predict([probability])[0])
-            score = round(max(0.0, min(100.0, probability * 100.0)), 2)
-        except (ImportError, ValueError, KeyError, OSError):
-            pass
-    score = min(100.0, score)
+    if _embedding_model is None:
+        load_embedding_model()
+    from ml_training.train_real import extract_pair_features
+    import pandas as pd
+    row = pd.DataFrame([{
+        "resume_text": getattr(profile, "raw_text", "") or "",
+        "job_description_text": jd_text,
+        "resume_id": "request-resume",
+        "job_id": "request-job",
+    }])
+    pair_features, _ = extract_pair_features(
+        row, use_embeddings=True, vectorizer=_v2_vectorizer,
+        embedding_model=_embedding_model,
+    )
+    pair_features = pair_features.reindex(columns=_v2_features).fillna(0.0)
+    probability = float(_v2_model.predict_proba(pair_features)[0, 1])
+    if _v2_calibrator is not None:
+        probability = float(_v2_calibrator.predict([probability])[0])
+    score = round(max(0.0, min(100.0, probability * 100.0)), 2)
+
+    shap_values = _shap_explainer.shap_values(pair_features)[0]
+    groups = {
+        "technical": {"exp_years", "num_projects", "num_certs"},
+        "domain": {"degree_level", "has_degree", "gpa", "has_gpa"},
+        "experience": {"required_years", "exp_gap"},
+        "education": {"degree_level", "has_degree", "gpa", "has_gpa"},
+        "text_similarity": {"tfidf_similarity", "minilm_mean_cosine", "minilm_max_cosine"},
+        "skills": {"skill_match_ratio", "resume_skill_count", "jd_skill_count", "missing_skill_count"},
+    }
+    contributions = [
+        {"feature": feature, "value": round(float(value), 6)}
+        for feature, value in zip(_v2_features, shap_values)
+    ]
+    positive = sorted((item for item in contributions if item["value"] > 0),
+                      key=lambda item: item["value"], reverse=True)[:5]
+    negative = sorted((item for item in contributions if item["value"] < 0),
+                      key=lambda item: item["value"])[:5]
+    group_values = {
+        group: round(sum(item["value"] for item in contributions if item["feature"] in names), 4)
+        for group, names in groups.items()
+    }
     related = sorted(set(_skills(getattr(profile, "raw_text", ""))) - set(matched) - set(missing))
     competency = {
-        "technical": round((len(matched) / len(jd_skills) * 100) if jd_skills else 50, 2),
-        "experience": 50.0 if getattr(profile, "experience", []) else 25.0,
-        "education": 50.0 if getattr(profile, "education", []) else 25.0,
+        group: round(50 + value * 10, 2)
+        for group, value in group_values.items()
     }
-    positive = [{"feature": "matched_skills", "value": len(matched)}] if matched else []
-    negative = [{"feature": "missing_skills", "value": -len(missing)}] if missing else []
     return {
         "fit_score": score,
         "confidence": round(min(0.99, 0.5 + abs(score - 50) / 100), 3),
@@ -132,6 +162,8 @@ async def analyze_resume(
     role: str = Form(""),
 ):
     started = time.perf_counter()
+    if not jd_text.strip():
+        raise HTTPException(status_code=400, detail="Job description text is required")
     if not resume.filename:
         raise HTTPException(status_code=400, detail="Resume filename is required")
     try:

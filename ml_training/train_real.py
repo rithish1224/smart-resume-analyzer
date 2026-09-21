@@ -58,6 +58,48 @@ DEFAULT_SKILLS = {
 }
 
 
+def chunk_text(text: str, size: int = 256) -> list[str]:
+    words = str(text or "").split()
+    return [" ".join(words[i:i + size]) for i in range(0, len(words), size)] or [""]
+
+
+def embedding_pair_features(
+    resumes: list[str],
+    job_descriptions: list[str],
+    embedding_model: Any,
+) -> pd.DataFrame:
+    """Compute the same chunked MiniLM cosine features used during training."""
+    all_chunks: list[str] = []
+    boundaries: list[tuple[int, int, int, int]] = []
+    for resume, jd in zip(resumes, job_descriptions):
+        resume_chunks, jd_chunks = chunk_text(resume), chunk_text(jd)
+        resume_start = len(all_chunks)
+        all_chunks.extend(resume_chunks)
+        resume_end = len(all_chunks)
+        jd_start = len(all_chunks)
+        all_chunks.extend(jd_chunks)
+        jd_end = len(all_chunks)
+        boundaries.append((resume_start, resume_end, jd_start, jd_end))
+    encoded = embedding_model.encode(
+        all_chunks,
+        show_progress_bar=False,
+        normalize_embeddings=True,
+    )
+    rows = []
+    for resume_start, resume_end, jd_start, jd_end in boundaries:
+        resume_vectors = encoded[resume_start:resume_end]
+        jd_vectors = encoded[jd_start:jd_end]
+        rows.append({
+            "minilm_mean_cosine": float(np.sum(
+                resume_vectors.mean(axis=0) * jd_vectors.mean(axis=0)
+            )),
+            "minilm_max_cosine": float(np.sum(
+                resume_vectors.max(axis=0) * jd_vectors.max(axis=0)
+            )),
+        })
+    return pd.DataFrame(rows)
+
+
 def load_real_dataset(
     dataset: str = DEFAULT_DATASET,
     data_path: str | Path | None = None,
@@ -149,6 +191,8 @@ def extract_pair_features(
     train_indices: Iterable[int] | None = None,
     cache_dir: str | Path | None = None,
     use_embeddings: bool = True,
+    vectorizer: TfidfVectorizer | None = None,
+    embedding_model: Any | None = None,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Extract interpretable pair features and optionally cached MiniLM vectors."""
     train_idx = list(train_indices) if train_indices is not None else list(frame.index)
@@ -157,8 +201,9 @@ def extract_pair_features(
         for token in re.findall(r"[A-Za-z][A-Za-z+#.-]{2,}", str(text))
         if token.lower() in DEFAULT_SKILLS
     })
-    vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), min_df=1, max_features=1500)
-    vectorizer.fit((frame.loc[train_idx, "resume_text"] + " " + frame.loc[train_idx, "job_description_text"]).tolist())
+    if vectorizer is None:
+        vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), min_df=1, max_features=1500)
+        vectorizer.fit((frame.loc[train_idx, "resume_text"] + " " + frame.loc[train_idx, "job_description_text"]).tolist())
     rows: list[dict[str, float]] = []
     for _, row in frame.iterrows():
         resume, jd = row.resume_text.lower(), row.job_description_text.lower()
@@ -191,7 +236,17 @@ def extract_pair_features(
         })
     features = pd.DataFrame(rows, index=frame.index)
     meta: dict[str, Any] = {"tfidf_features": len(vectorizer.vocabulary_), "skills": skills}
-    if cache_dir and use_embeddings:
+    if embedding_model is not None:
+        features = pd.concat([
+            features.reset_index(drop=True),
+            embedding_pair_features(
+                frame["resume_text"].tolist(),
+                frame["job_description_text"].tolist(),
+                embedding_model,
+            ),
+        ], axis=1)
+        meta["embedding_cache"] = None
+    elif cache_dir and use_embeddings:
         try:
             from sentence_transformers import SentenceTransformer
             cache = Path(cache_dir)
@@ -202,13 +257,10 @@ def extract_pair_features(
                 embeddings = np.load(path)
             else:
                 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-                def chunks(text: str) -> list[str]:
-                    words = text.split()
-                    return [" ".join(words[i:i + 256]) for i in range(0, len(words), 256)] or [""]
                 all_chunks = []
                 boundaries = []
                 for resume, jd in zip(frame["resume_text"], frame["job_description_text"]):
-                    resume_chunks, jd_chunks = chunks(resume), chunks(jd)
+                    resume_chunks, jd_chunks = chunk_text(resume), chunk_text(jd)
                     start = len(all_chunks)
                     all_chunks.extend(resume_chunks + jd_chunks)
                     boundaries.append((start, start + len(resume_chunks), start + len(resume_chunks), len(all_chunks)))
