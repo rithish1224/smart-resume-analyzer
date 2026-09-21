@@ -17,47 +17,9 @@ const Analyze = () => {
   const [loadingStep, setLoadingStep] = useState(0);
   const [resumeFile, setResumeFile] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisError, setAnalysisError] = useState(null);
 
   const loadingSteps = ['Parsing resume...', 'Extracting skills...', 'Running XGBoost...', 'Computing SHAP...', 'Done!'];
-
-  const mockAnalysisData = {
-    score: 87,
-    confidence: 0.94,
-    shortlistDecision: 'SHORTLIST',
-    modelVersion: 'XGBRanker v1.0',
-    competencyScores: {
-      technical: 90,
-      experience: 85,
-      education: 80,
-      projects: 88,
-      certifications: 75,
-      communication: 82
-    },
-    requiredScores: {
-      technical: 85,
-      experience: 80,
-      education: 75,
-      projects: 80,
-      certifications: 70,
-      communication: 80
-    },
-    skillGaps: [
-      { skillName: 'Python & FastAPI', requiredLevel: 5, candidateLevel: 4.8, priority: 'High', status: 'met' },
-      { skillName: 'XGBoost & Machine Learning', requiredLevel: 5, candidateLevel: 4.5, priority: 'High', status: 'met' },
-      { skillName: 'System Architecture & Scalability', requiredLevel: 5, candidateLevel: 3.2, priority: 'High', status: 'soft' },
-      { skillName: 'Cloud Deployments (AWS/GCP)', requiredLevel: 4, candidateLevel: 2.0, priority: 'Med', status: 'hard' },
-      { skillName: 'Fairness & SHAP Auditing', requiredLevel: 4, candidateLevel: 4.2, priority: 'Low', status: 'met' }
-    ],
-    shapData: {
-      features: [
-        { name: 'Technical Skill Match', contribution: 18.5, evidence: 'Matches 92% of required core skills' },
-        { name: 'Years of Experience', contribution: 12.2, evidence: '5+ years relevant domain experience' },
-        { name: 'Projects & Portfolio', contribution: 8.0, evidence: 'Strong production project portfolio' },
-        { name: 'Cloud Certification', contribution: -4.5, evidence: 'AWS/GCP Developer certification missing' }
-      ],
-      summary: 'Candidate ranks in the top 5% due to exceptional technical proficiency and strong domain project execution.'
-    }
-  };
 
   const handleAnalyze = async ({ role, jd }) => {
     if (!resumeFile) {
@@ -66,6 +28,7 @@ const Analyze = () => {
       return;
     }
     setIsLoading(true);
+    setAnalysisError(null);
     setStep(3);
     setLoadingStep(0);
     try {
@@ -73,6 +36,7 @@ const Analyze = () => {
       setAnalysisResult(data);
       setStep(4);
     } catch (error) {
+      setAnalysisError(error.response?.data?.detail || 'Analysis failed. Please check the resume.');
       toast.error(error.response?.data?.detail || 'Analysis failed. Please check the resume.');
       setStep(2);
     } finally {
@@ -80,9 +44,7 @@ const Analyze = () => {
     }
   };
 
-  const result = analysisResult || mockAnalysisData;
   const displayData = analysisResult ? {
-    ...mockAnalysisData,
     score: analysisResult.fit_score,
     confidence: analysisResult.confidence,
     modelVersion: analysisResult.model_version,
@@ -96,7 +58,8 @@ const Analyze = () => {
       summary: (analysisResult.improvement_suggestions || []).join(' '),
     },
     shortlistDecision: analysisResult.fit_score >= 75 ? 'SHORTLIST' : analysisResult.fit_score >= 50 ? 'REVIEW' : 'REJECT',
-  } : result;
+    requiredScores: {},
+  } : null;
 
   const handleExport = () => {
     toast.success('Exporting detailed candidate evaluation report...');
@@ -143,6 +106,7 @@ const Analyze = () => {
 
           {step === 2 && (
             <div className="max-w-3xl mx-auto">
+              {analysisError && <div className="mb-4 rounded-xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-200">{analysisError}</div>}
               <RoleInput onSubmit={handleAnalyze} isLoading={isLoading} />
             </div>
           )}
