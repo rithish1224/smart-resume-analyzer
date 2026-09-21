@@ -1,1 +1,80 @@
-{"matched_skills":["api","aws","ci/cd","docker","fastapi","flask","git","kubernetes","machine learning","postgresql","python","redis","rest","sql","terraform"],"missing_skills":[],"related_skills":[],"ui_counts":{"matched":15,"missing":0,"related":0}}
+{
+  "candidate_name": "Priya Raman (sample candidate)",
+  "competency_scores": {
+    "domain": 48.54,
+    "education": 48.54,
+    "experience": 48.97,
+    "skills": 42.35,
+    "technical": 52.39,
+    "text_similarity": 65.09
+  },
+  "confidence": 0.644,
+  "fit_score": 35.63,
+  "improvement_suggestions": [],
+  "latency_ms": 368.7,
+  "matched_skills": [
+    "api",
+    "aws",
+    "ci/cd",
+    "docker",
+    "fastapi",
+    "flask",
+    "git",
+    "kubernetes",
+    "machine learning",
+    "postgresql",
+    "python",
+    "redis",
+    "rest",
+    "sql",
+    "terraform"
+  ],
+  "missing_skills": [],
+  "model_version": "2.0",
+  "related_skills": [],
+  "role": "Demo",
+  "shap_top_negative": [
+    {
+      "feature": "resume_skill_count",
+      "value": -0.586778
+    },
+    {
+      "feature": "missing_skill_count",
+      "value": -0.172553
+    },
+    {
+      "feature": "gpa",
+      "value": -0.136994
+    },
+    {
+      "feature": "num_projects",
+      "value": -0.105134
+    },
+    {
+      "feature": "exp_gap",
+      "value": -0.103318
+    }
+  ],
+  "shap_top_positive": [
+    {
+      "feature": "minilm_mean_cosine",
+      "value": 0.883147
+    },
+    {
+      "feature": "tfidf_similarity",
+      "value": 0.392529
+    },
+    {
+      "feature": "minilm_max_cosine",
+      "value": 0.233434
+    },
+    {
+      "feature": "num_certs",
+      "value": 0.192592
+    },
+    {
+      "feature": "exp_years",
+      "value": 0.151883
+    }
+  ]
+}

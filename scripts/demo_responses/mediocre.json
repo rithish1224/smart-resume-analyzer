@@ -1,1 +1,89 @@
-{"matched_skills":["api","flask","git","python","rest","sql"],"missing_skills":["aws","ci/cd","docker","fastapi","kubernetes","machine learning","postgresql","redis","terraform"],"related_skills":["docker"],"ui_counts":{"matched":6,"missing":9,"related":1}}
+{
+  "candidate_name": "Rahul Verma (sample candidate)",
+  "competency_scores": {
+    "domain": 53.93,
+    "education": 53.93,
+    "experience": 49.85,
+    "skills": 49.0,
+    "technical": 51.48,
+    "text_similarity": 55.38
+  },
+  "confidence": 0.644,
+  "fit_score": 35.63,
+  "improvement_suggestions": [
+    "Add evidence of aws to the resume.",
+    "Add evidence of ci/cd to the resume.",
+    "Add evidence of docker to the resume.",
+    "Add evidence of fastapi to the resume.",
+    "Add evidence of kubernetes to the resume."
+  ],
+  "latency_ms": 197.56,
+  "matched_skills": [
+    "api",
+    "flask",
+    "git",
+    "python",
+    "rest",
+    "sql"
+  ],
+  "missing_skills": [
+    "aws",
+    "ci/cd",
+    "docker",
+    "fastapi",
+    "kubernetes",
+    "machine learning",
+    "postgresql",
+    "redis",
+    "terraform"
+  ],
+  "model_version": "2.0",
+  "related_skills": [
+    "docker"
+  ],
+  "role": "Demo",
+  "shap_top_negative": [
+    {
+      "feature": "exp_years",
+      "value": -0.126748
+    },
+    {
+      "feature": "missing_skill_count",
+      "value": -0.100458
+    },
+    {
+      "feature": "resume_skill_count",
+      "value": -0.078291
+    },
+    {
+      "feature": "exp_gap",
+      "value": -0.014524
+    },
+    {
+      "feature": "has_degree",
+      "value": -0.000163
+    }
+  ],
+  "shap_top_positive": [
+    {
+      "feature": "degree_level",
+      "value": 0.24156
+    },
+    {
+      "feature": "minilm_max_cosine",
+      "value": 0.221766
+    },
+    {
+      "feature": "minilm_mean_cosine",
+      "value": 0.210497
+    },
+    {
+      "feature": "num_projects",
+      "value": 0.179332
+    },
+    {
+      "feature": "gpa",
+      "value": 0.144132
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "generated_by": "scripts/demo_check.py",
+  "sha256": {
+    "good": "45d0af7538f868ab07fa70a3edc68831102d0c0387e60e1e0958d2bd2b8b9c0c",
+    "mediocre": "b86cca39d15568f6bbea86642b40a8e4c7b085f8b239c164ca23d0f0d876f06b",
+    "unrelated": "9bbbc887261fbe30fccb13813f260449ad9df87025ad8592878b66a070312914"
+  }
+}

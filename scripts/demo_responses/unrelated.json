@@ -1,1 +1,86 @@
-{"matched_skills":[],"missing_skills":["api","aws","ci/cd","docker","fastapi","flask","git","kubernetes","machine learning","postgresql","python","redis","rest","sql","terraform"],"related_skills":[],"ui_counts":{"matched":0,"missing":15,"related":0}}
+{
+  "candidate_name": "Meera Kapoor (sample candidate)",
+  "competency_scores": {
+    "domain": 50.47,
+    "education": 50.47,
+    "experience": 49.67,
+    "skills": 45.87,
+    "technical": 51.45,
+    "text_similarity": 41.52
+  },
+  "confidence": 0.99,
+  "fit_score": 0.0,
+  "improvement_suggestions": [
+    "Add evidence of api to the resume.",
+    "Add evidence of aws to the resume.",
+    "Add evidence of ci/cd to the resume.",
+    "Add evidence of docker to the resume.",
+    "Add evidence of fastapi to the resume."
+  ],
+  "latency_ms": 193.51,
+  "matched_skills": [],
+  "missing_skills": [
+    "api",
+    "aws",
+    "ci/cd",
+    "docker",
+    "fastapi",
+    "flask",
+    "git",
+    "kubernetes",
+    "machine learning",
+    "postgresql",
+    "python",
+    "redis",
+    "rest",
+    "sql",
+    "terraform"
+  ],
+  "model_version": "2.0",
+  "related_skills": [],
+  "role": "Demo",
+  "shap_top_negative": [
+    {
+      "feature": "minilm_mean_cosine",
+      "value": -0.863151
+    },
+    {
+      "feature": "resume_skill_count",
+      "value": -0.281846
+    },
+    {
+      "feature": "tfidf_similarity",
+      "value": -0.137851
+    },
+    {
+      "feature": "missing_skill_count",
+      "value": -0.08038
+    },
+    {
+      "feature": "skill_match_ratio",
+      "value": -0.050686
+    }
+  ],
+  "shap_top_positive": [
+    {
+      "feature": "minilm_max_cosine",
+      "value": 0.152742
+    },
+    {
+      "feature": "exp_years",
+      "value": 0.145408
+    },
+    {
+      "feature": "gpa",
+      "value": 0.073886
+    },
+    {
+      "feature": "num_certs",
+      "value": 0.035838
+    },
+    {
+      "feature": "has_gpa",
+      "value": 0.006198
+    }
+  ]
+}
