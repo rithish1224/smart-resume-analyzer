@@ -1,0 +1,9 @@
+{
+  "thresholds": {
+    "strong": 41.379312,
+    "possible": 10.0
+  },
+  "source": "v2 validation split calibrated scores",
+  "validation_rows": 999,
+  "definition": "Strong is the top 25%; Possible is the next 25%; remaining scores are Weak."
+}
