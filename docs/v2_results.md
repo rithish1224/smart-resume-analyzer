@@ -62,4 +62,12 @@ MiniLM embeddings are chunked and cached under
 - NDCG is reported only for test job-text groups with at least two resumes and
   differing labels.
 - The calibrated 0-100 score is intended for ranking support, not a probability
+
+## Candidate-facing explanation exclusions
+
+The candidate-facing SHAP view excludes JD-only fields (`jd_chars`,
+`jd_skill_count`, `required_years`) and the resume length field
+(`resume_chars`). These fields describe the input text or job requirement
+rather than candidate evidence, so they are not shown or included in grouped
+competency sums.
   of hiring success.

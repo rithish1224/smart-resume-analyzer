@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, AlertCircle, XCircle } from 'lucide-react'
+import { getMatchBand } from '../../config/decisionBands'
 
-export default function ScoreSummary({ score, confidence, shortlistDecision, modelVersion }) {
+export default function ScoreSummary({ score, modelVersion }) {
   const [displayScore, setDisplayScore] = useState(0)
 
   useEffect(() => {
@@ -30,24 +30,6 @@ export default function ScoreSummary({ score, confidence, shortlistDecision, mod
     if (val >= 75) return 'text-emerald-400 stroke-emerald-400'
     if (val >= 50) return 'text-amber-400 stroke-amber-400'
     return 'text-red-400 stroke-red-400'
-  }
-
-  const getDecisionGlow = () => {
-    switch (shortlistDecision) {
-      case 'SHORTLIST': return 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-      case 'REVIEW': return 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
-      case 'REJECT': return 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-      default: return 'bg-white/5 border-white/10 text-white'
-    }
-  }
-
-  const DecisionIcon = () => {
-    switch (shortlistDecision) {
-      case 'SHORTLIST': return <CheckCircle2 size={16} />
-      case 'REVIEW': return <AlertCircle size={16} />
-      case 'REJECT': return <XCircle size={16} />
-      default: return null
-    }
   }
 
   const radius = 80
@@ -101,17 +83,11 @@ export default function ScoreSummary({ score, confidence, shortlistDecision, mod
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-slate-300">
-          Confidence: {(confidence * 100).toFixed(1)}%
+        <div className="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-slate-200 font-bold text-sm">
+          Match band: {getMatchBand(score)}
         </div>
-
-        <div className={`px-4 py-2 rounded-full border flex items-center gap-2 font-bold text-sm tracking-wider ${getDecisionGlow()}`}>
-          <DecisionIcon />
-          {shortlistDecision}
-        </div>
-        
-        <div className="text-xs text-slate-500 font-medium">
-          {score >= 75 ? 'Strong Candidate' : score >= 50 ? 'Potential Match' : 'High Risk'}
+        <div className="text-xs text-slate-500 font-medium text-center">
+          Decision support only; human review required.
         </div>
       </div>
 

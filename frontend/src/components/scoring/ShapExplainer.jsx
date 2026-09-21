@@ -3,8 +3,28 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, Refere
 import { TrendingUp, TrendingDown } from 'lucide-react'
 
 export default function ShapExplainer({ shapData }) {
+  const labels = {
+    skill_match_ratio: 'Skill match with the JD',
+    tfidf_similarity: 'Wording similarity',
+    minilm_mean_cosine: 'Semantic similarity',
+    minilm_max_cosine: 'Best chunk similarity',
+    exp_years: 'Candidate experience',
+    exp_gap: 'Experience vs. requirement',
+    degree_level: 'Degree level',
+    has_degree: 'Degree present',
+    num_projects: 'Project evidence',
+    num_certs: 'Certification evidence',
+    missing_skill_count: 'Missing required skills',
+    resume_skill_count: 'Candidate skill coverage',
+    has_gpa: 'GPA present',
+    gpa: 'GPA',
+  }
+  const readable = shapData.features.map(feature => ({
+    ...feature,
+    name: labels[feature.name] || feature.name.replace(/_/g, ' '),
+  }))
   const chartData = shapData.features.map(f => ({
-    name: f.name,
+    name: labels[f.name] || f.name.replace(/_/g, ' '),
     value: f.contribution,
     color: f.contribution >= 0 ? '#6366f1' : '#ef4444' // indigo for positive, red for negative
   })).sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
@@ -16,7 +36,7 @@ export default function ShapExplainer({ shapData }) {
         <div className="bg-[#0f0f2e] border border-white/10 p-3 rounded-lg shadow-xl">
           <p className="text-sm font-medium text-white mb-1">{data.name}</p>
           <p className={`text-xs font-bold ${data.value >= 0 ? 'text-indigo-400' : 'text-red-400'}`}>
-            Impact: {data.value > 0 ? '+' : ''}{data.value.toFixed(2)}%
+            Impact on score (log-odds): {data.value > 0 ? '+' : ''}{data.value.toFixed(2)}
           </p>
         </div>
       )
@@ -24,8 +44,8 @@ export default function ShapExplainer({ shapData }) {
     return null
   }
 
-  const positiveFactors = shapData.features.filter(f => f.contribution > 0).sort((a, b) => b.contribution - a.contribution).slice(0, 3)
-  const negativeFactors = shapData.features.filter(f => f.contribution < 0).sort((a, b) => a.contribution - b.contribution).slice(0, 3)
+  const positiveFactors = readable.filter(f => f.contribution > 0).sort((a, b) => b.contribution - a.contribution).slice(0, 3)
+  const negativeFactors = readable.filter(f => f.contribution < 0).sort((a, b) => a.contribution - b.contribution).slice(0, 3)
 
   return (
     <motion.div 
@@ -71,7 +91,7 @@ export default function ShapExplainer({ shapData }) {
                     <span className="text-xs text-indigo-200 mt-1 block leading-relaxed">{factor.evidence}</span>
                   </div>
                   <span className="text-xs font-bold text-indigo-400 bg-indigo-500/20 px-2 py-1 rounded whitespace-nowrap">
-                    +{factor.contribution.toFixed(1)}%
+                    +{factor.contribution.toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -92,7 +112,7 @@ export default function ShapExplainer({ shapData }) {
                       <span className="text-xs text-red-200 mt-1 block leading-relaxed">{factor.evidence}</span>
                     </div>
                     <span className="text-xs font-bold text-red-400 bg-red-500/20 px-2 py-1 rounded whitespace-nowrap">
-                      {factor.contribution.toFixed(1)}%
+                      {factor.contribution.toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -103,8 +123,8 @@ export default function ShapExplainer({ shapData }) {
       </div>
 
       <div className="mt-8 bg-white/5 border border-white/10 p-4 rounded-xl">
-        <p className="text-sm text-slate-300 leading-relaxed italic">
-          "{shapData.summary}"
+        <p className="text-sm text-slate-400 leading-relaxed">
+          Units: impact on score (log-odds). JD-only and text-length features are excluded from this candidate-facing view.
         </p>
       </div>
     </motion.div>

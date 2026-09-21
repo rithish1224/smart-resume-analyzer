@@ -7,7 +7,6 @@ import CompetencyRadar from '../components/scoring/CompetencyRadar';
 import SkillGapChart from '../components/scoring/SkillGapChart';
 import ShapExplainer from '../components/scoring/ShapExplainer';
 import ShortlistDecision from '../components/scoring/ShortlistDecision';
-import ResumeImprovementPanel from '../components/improvement/ResumeImprovementPanel';
 import toast from 'react-hot-toast';
 import { analyzeApi } from '../api/client';
 
@@ -49,16 +48,12 @@ const Analyze = () => {
     confidence: analysisResult.confidence,
     modelVersion: analysisResult.model_version,
     competencyScores: analysisResult.competency_scores,
-    skillGaps: (analysisResult.missing_skills || []).map((skill) => ({
-      skillName: skill, requiredLevel: 1, candidateLevel: 0, priority: 'High', status: 'hard',
-    })),
     shapData: {
       features: [...(analysisResult.shap_top_positive || []), ...(analysisResult.shap_top_negative || [])]
+        .filter((item) => !['jd_chars', 'jd_skill_count', 'required_years', 'resume_chars'].includes(item.feature))
+        .filter((item, index, all) => all.findIndex(other => other.feature === item.feature) === index)
         .map((item) => ({ name: item.feature, contribution: item.value, evidence: '' })),
-      summary: (analysisResult.improvement_suggestions || []).join(' '),
     },
-    shortlistDecision: analysisResult.fit_score >= 75 ? 'SHORTLIST' : analysisResult.fit_score >= 50 ? 'REVIEW' : 'REJECT',
-    requiredScores: {},
   } : null;
 
   const handleExport = () => {
@@ -125,7 +120,7 @@ const Analyze = () => {
                 <div className="flex justify-between items-center mb-4">
                     <div>
                       <h2 className="text-3xl font-outfit font-bold text-white">Candidate Diagnostic Results</h2>
-                      <p className="text-slate-400 text-sm mt-1">Multi-dimensional evaluation, SHAP explainability, and fairness analysis.</p>
+                      <p className="text-slate-400 text-sm mt-1">Model evidence, skill coverage, and review support.</p>
                     </div>
                     <button onClick={handleExport} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-sm font-semibold border border-white/10 transition-all shadow-lg">
                       Export Full Report
@@ -137,21 +132,22 @@ const Analyze = () => {
                     <div className="md:col-span-1">
                         <ScoreSummary 
                           score={displayData.score} 
-                          confidence={displayData.confidence} 
-                          shortlistDecision={displayData.shortlistDecision} 
                           modelVersion={displayData.modelVersion} 
                         />
                     </div>
                     <div className="md:col-span-2">
                         <CompetencyRadar 
                           competencyScores={displayData.competencyScores} 
-                          requiredScores={displayData.requiredScores} 
                         />
                     </div>
 
                     {/* Row 2: Skill Gap Chart */}
                     <div className="md:col-span-3 min-h-[300px]">
-                        <SkillGapChart skillGaps={displayData.skillGaps} />
+                        <SkillGapChart
+                          matchedSkills={analysisResult.matched_skills}
+                          missingSkills={analysisResult.missing_skills}
+                          relatedSkills={analysisResult.related_skills}
+                        />
                     </div>
 
                     {/* Row 3: SHAP Explainer & Shortlist Recommendation */}
@@ -159,46 +155,23 @@ const Analyze = () => {
                         <ShapExplainer shapData={displayData.shapData} />
                     </div>
                     <div className="md:col-span-1">
-                        <ShortlistDecision decision={displayData.shortlistDecision} score={displayData.score} />
+                        <ShortlistDecision />
                     </div>
 
                     {/* Row 4: Fairness Audit */}
                     <div className="md:col-span-3 p-6 rounded-3xl backdrop-blur-xl bg-white/5 border border-white/10">
                         <h3 className="text-lg font-outfit font-bold text-white mb-4">Fairness & Algorithmic Audit</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-                              <p className="text-xs text-gray-400 mb-1">Disparate Impact Ratio (DIR)</p>
-                              <p className="text-2xl font-bold text-emerald-400">0.95 (Pass)</p>
-                              <p className="text-[10px] text-gray-500 mt-1">Ethical threshold &gt; 0.80</p>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-                              <p className="text-xs text-gray-400 mb-1">Demographic Parity Gap</p>
-                              <p className="text-2xl font-bold text-emerald-400">0.02 (Pass)</p>
-                              <p className="text-[10px] text-gray-500 mt-1">Parity gap &lt; 0.10</p>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
-                              <p className="text-xs text-gray-400 mb-1">Equal Opportunity Gap (EO)</p>
-                              <p className="text-2xl font-bold text-emerald-400">0.05 (Pass)</p>
-                              <p className="text-[10px] text-gray-500 mt-1">TPR gap &lt; 0.10</p>
-                            </div>
-                        </div>
+                        <p className="text-slate-300">Not computed for this model yet.</p>
                     </div>
 
                     {/* Row 5: Improvement Roadmap */}
                     <div className="md:col-span-3 p-6 rounded-3xl backdrop-blur-xl bg-white/5 border border-white/10">
-                         <h3 className="text-lg font-outfit font-bold text-white mb-4">AI Candidate Growth Roadmap</h3>
-                         <ul className="list-disc pl-5 text-gray-300 space-y-2 text-sm">
-                             <li><strong className="text-indigo-400">30 Days:</strong> Complete cloud deployment certifications (AWS Solutions Architect / GCP Developer).</li>
-                             <li><strong className="text-violet-400">60 Days:</strong> Deepen microservices system design & Kubernetes cluster management skills.</li>
-                             <li><strong className="text-cyan-400">90 Days:</strong> Lead architectural reviews and optimize end-to-end production pipelines.</li>
-                         </ul>
-                    </div>
-
-                    {/* Resume Improvement Panel */}
-                    <div className="md:col-span-3">
-                      <div className="mt-4 border-t border-white/10 pt-6">
-                        <ResumeImprovementPanel fileId={null} />
-                      </div>
+                         <h3 className="text-lg font-outfit font-bold text-white mb-4">Improvement suggestions</h3>
+                         {(analysisResult.improvement_suggestions || []).length ? (
+                           <ul className="list-disc pl-5 text-gray-300 space-y-2 text-sm">
+                             {analysisResult.improvement_suggestions.map((suggestion, index) => <li key={index}>{suggestion}</li>)}
+                           </ul>
+                         ) : <p className="text-slate-400 text-sm">No improvement suggestions were returned.</p>}
                     </div>
                 </div>
             </div>

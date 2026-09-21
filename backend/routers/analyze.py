@@ -130,9 +130,15 @@ def _score(profile: Any, jd_text: str) -> Dict[str, Any]:
         "text_similarity": {"tfidf_similarity", "minilm_mean_cosine", "minilm_max_cosine"},
         "skills": {"skill_match_ratio", "resume_skill_count", "jd_skill_count", "missing_skill_count"},
     }
+    excluded = {"jd_chars", "jd_skill_count", "required_years", "resume_chars"}
+    groups = {
+        group: {feature for feature in features if feature not in excluded}
+        for group, features in groups.items()
+    }
     contributions = [
         {"feature": feature, "value": round(float(value), 6)}
         for feature, value in zip(_v2_features, shap_values)
+        if feature not in excluded
     ]
     positive = sorted((item for item in contributions if item["value"] > 0),
                       key=lambda item: item["value"], reverse=True)[:5]
