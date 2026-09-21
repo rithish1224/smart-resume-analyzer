@@ -16,11 +16,13 @@ DEGREE_KEYWORDS = {
 
 def extract_required_years(text: str) -> float:
     matches = re.findall(
-        r"(?i)(?:at least|minimum(?: of)?|requires?|required|need(?:s)?)"
-        r"\s*(\d+(?:\.\d+)?)\s*(?:\+\s*)?(?:years?|yrs?)",
+        r"(?i)(?:(?:at least|minimum(?: of)?|requires?|required|need(?:s)?)"
+        r"\s*(\d+(?:\.\d+)?)\s*(?:\+\s*)?(?:years?|yrs?)|"
+        r"(\d+(?:\.\d+)?)\s*\+\s*(?:years?|yrs?))",
         text or "",
     )
-    return float(max(map(float, matches))) if matches else np.nan
+    values = [float(value) for match in matches for value in match if value]
+    return float(max(values)) if values else np.nan
 
 
 def extract_experience_years(text: str) -> float:

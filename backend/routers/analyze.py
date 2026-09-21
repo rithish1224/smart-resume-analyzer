@@ -77,7 +77,9 @@ def _get_parser() -> ResumeParser:
 
 
 def _skills(text: str) -> List[str]:
-    return sorted({match.group(0).lower() for match in _SKILL_RE.finditer(text or "")})
+    from ml_training.train_real import extract_normalized_skills
+    active, _ = extract_normalized_skills(text)
+    return sorted(active)
 
 
 def _model_version() -> str:
@@ -91,7 +93,10 @@ def _model_version() -> str:
 
 
 def _score(profile: Any, jd_text: str) -> Dict[str, Any]:
-    resume_skills = set(getattr(profile, "skills", []) or [])
+    from ml_training.train_real import extract_normalized_skills
+    resume_skills, resume_related = extract_normalized_skills(
+        getattr(profile, "raw_text", "") or ""
+    )
     jd_skills = set(_skills(jd_text))
     matched = sorted(resume_skills.intersection(jd_skills))
     missing = sorted(jd_skills - resume_skills)
@@ -137,7 +142,7 @@ def _score(profile: Any, jd_text: str) -> Dict[str, Any]:
         group: round(sum(item["value"] for item in contributions if item["feature"] in names), 4)
         for group, names in groups.items()
     }
-    related = sorted(set(_skills(getattr(profile, "raw_text", ""))) - set(matched) - set(missing))
+    related = sorted(resume_related)
     competency = {
         group: round(50 + value * 10, 2)
         for group, value in group_values.items()

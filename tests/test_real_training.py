@@ -6,6 +6,7 @@ from ml_training.feature_engineering import (
     extract_experience_years,
     extract_required_years,
 )
+from ml_training.train_real import extract_normalized_skills
 from ml_training.train_real import grouped_split
 
 
@@ -18,6 +19,26 @@ def test_experience_and_required_year_parsing():
 def test_degree_level_missing_is_nan():
     assert extract_degree_level("Master of Science") == 3
     assert np.isnan(extract_degree_level("No education listed"))
+
+
+def test_sample_skill_normalization_and_learning_context():
+    sample_dir = __import__("pathlib").Path(__file__).resolve().parents[1] / "scripts" / "demo_samples"
+    resume = (sample_dir / "good_resume.txt").read_text(encoding="utf-8")
+    jd = (sample_dir / "jd.txt").read_text(encoding="utf-8")
+    resume_skills, resume_related = extract_normalized_skills(resume)
+    jd_skills, _ = extract_normalized_skills(jd)
+    assert {"git", "rest", "api", "terraform", "ci/cd", "github actions",
+            "postgresql", "redis", "flask"} <= resume_skills
+    assert {"flask", "postgresql", "ci/cd", "redis"} <= jd_skills
+    learning_skills, learning_related = extract_normalized_skills("Currently learning Docker")
+    assert "docker" in learning_related
+    assert "docker" not in learning_skills
+
+
+def test_decimal_and_hedged_experience_years():
+    assert extract_experience_years("about 1.5 years of experience") == 1.5
+    assert extract_experience_years("5 years of experience") == 5
+    assert extract_required_years("3+ years of professional experience") == 3
 
 
 def test_group_split_has_no_resume_or_job_overlap():

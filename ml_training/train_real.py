@@ -55,7 +55,32 @@ DEFAULT_SKILLS = {
     "azure", "gcp", "docker", "kubernetes", "pytorch", "tensorflow",
     "scikit-learn", "machine learning", "deep learning", "nlp", "fastapi",
     "django", "react", "git", "spark", "airflow", "tableau", "power bi",
+    "rest", "api", "terraform", "ci/cd", "github actions", "postgresql",
+    "redis", "flask",
 }
+SKILL_SYNONYMS = {"postgres": "postgresql", "postgre": "postgresql"}
+RELATED_CONTEXT = re.compile(
+    r"(?:currently\s+)?(?:learning|familiar\s+with|exposure\s+to|keen\s+to\s+learn)"
+    r"\s*$",
+    re.IGNORECASE,
+)
+
+
+def extract_normalized_skills(text: str) -> tuple[set[str], set[str]]:
+    """Return (active skills, related/learning skills) with stable synonyms."""
+    lowered = str(text or "").lower().replace("rest apis", "rest api")
+    found: set[str] = set()
+    related: set[str] = set()
+    skills = sorted(DEFAULT_SKILLS | set(SKILL_SYNONYMS))
+    for skill in skills:
+        suffix = r"s?" if skill in {"api", "rest"} else ""
+        pattern = r"(?<!\w)" + re.escape(skill) + suffix + r"(?!\w)"
+        for match in re.finditer(pattern, lowered):
+            canonical = SKILL_SYNONYMS.get(skill, skill)
+            prefix = lowered[max(0, match.start() - 55):match.start()]
+            target = related if RELATED_CONTEXT.search(prefix) else found
+            target.add(canonical)
+    return found, related
 
 
 def chunk_text(text: str, size: int = 256) -> list[str]:
@@ -207,8 +232,8 @@ def extract_pair_features(
     rows: list[dict[str, float]] = []
     for _, row in frame.iterrows():
         resume, jd = row.resume_text.lower(), row.job_description_text.lower()
-        jd_skills = {s for s in skills if re.search(r"(?<!\w)" + re.escape(s) + r"(?!\w)", jd)}
-        resume_skills = {s for s in skills if re.search(r"(?<!\w)" + re.escape(s) + r"(?!\w)", resume)}
+        jd_skills, _ = extract_normalized_skills(jd)
+        resume_skills, _ = extract_normalized_skills(resume)
         years = extract_experience_years(resume)
         required_years = extract_required_years(jd)
         degree = extract_degree_level(resume)
