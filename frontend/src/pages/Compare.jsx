@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MultiCompare from '../components/compare/MultiCompare';
 import toast from 'react-hot-toast';
+import DemoDataBanner from '../components/common/DemoDataBanner';
 
 const initialCandidates = [
   { id: '1', name: 'Alex Johnson', role: 'Senior ML Engineer', score: 92, match: 94, radarData: [{ subject: 'Python', value: 95 }, { subject: 'ML Ops', value: 85 }, { subject: 'System Design', value: 90 }, { subject: 'NLP', value: 92 }] },
@@ -23,6 +24,7 @@ const Compare = () => {
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-6 md:p-12 font-inter pt-20">
       <div className="max-w-7xl mx-auto space-y-8">
+        <DemoDataBanner />
         <MultiCompare 
           candidates={candidates} 
           onShortlist={handleShortlist} 
@@ -31,6 +33,7 @@ const Compare = () => {
 
         <div className="p-8 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10">
           <h2 className="text-xl font-outfit font-semibold text-white mb-4">Batch Fairness & Ethics Audit</h2>
+          <p className="text-slate-400 text-sm mb-4">Demo values only; no computed audit is available.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-center">
               <p className="text-sm text-gray-400">Disparate Impact Ratio (DIR)</p>

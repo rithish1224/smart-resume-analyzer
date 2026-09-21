@@ -7,6 +7,7 @@ import KeywordAnalysis from './KeywordAnalysis';
 import SuggestionPanel from './SuggestionPanel';
 import FeedbackCollector from './FeedbackCollector';
 import { useImprovement } from '../../hooks/useImprovement';
+import DemoDataBanner from '../common/DemoDataBanner';
 
 export default function ResumeImprovementPanel({ fileId }) {
   const { 
@@ -26,6 +27,7 @@ export default function ResumeImprovementPanel({ fileId }) {
 
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-8">
+      <DemoDataBanner />
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold mb-3 bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
           📝 Resume Improvement Module

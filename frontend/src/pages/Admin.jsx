@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Activity, Users, Target, ShieldCheck, Cpu } from 'lucide-react'
+import DemoDataBanner from '../components/common/DemoDataBanner'
 
 export default function Admin() {
   const [stats, setStats] = useState(null)
@@ -43,6 +44,7 @@ export default function Admin() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <DemoDataBanner />
         <h1 className="text-3xl font-outfit font-bold text-white mb-2">Admin Dashboard</h1>
         <p className="text-slate-400">System overview and analytics.</p>
       </motion.div>
