@@ -78,6 +78,9 @@ cd ../backend
 uvicorn main:app --reload --port 8000
 ```
 
+> The backend and evaluation scripts require the spaCy English model. Install it
+> once with `python -m spacy download en_core_web_sm`.
+
 ### Frontend Setup
 
 ```bash
@@ -165,6 +168,21 @@ Due to the lack of historical hiring data at startup, proxy labels (scores 1-5) 
 ### Training Data
 The model is trained on **500 synthetic profiles** generated across 8 different
 domains (e.g., Data Science, Backend Dev, DevOps).
+
+## Real-label v2 evaluation
+
+The v2 pair model is trained only from the Hugging Face
+`cnamuangtoun/resume-job-description-fit` labels. Synthetic rows are not used
+in validation or test. Run `python ml_training/train_real.py` to reproduce the
+split, cached MiniLM features, validation-only tuning, and untouched test
+report. The dataset does not declare a license, and its labels are noisy proxy
+judgments rather than hiring outcomes.
+
+The final test metrics and ablation ladder are recorded in
+`backend/models/trained/v2/report.json` after the evaluation run. The test
+split is grouped by both resume and job identifiers; only qualifying job groups
+are used for NDCG. Results must be compared with TF-IDF, embedding-only, v1,
+and random baselines rather than interpreted as production hiring accuracy.
 
 ---
 

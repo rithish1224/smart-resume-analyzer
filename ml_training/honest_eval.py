@@ -25,6 +25,11 @@ from scipy.stats import spearmanr
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from backend.models import schemas as backend_schemas
+
+sys.modules.setdefault("backend.schemas", backend_schemas)
+
+from backend.services.parser import ResumeParser
 from ml_training.feature_engineering import extract_features
 
 FEATURES = ["exp_years", "skill_match_ratio", "num_projects", "num_certs", "gpa"]
@@ -124,6 +129,18 @@ def load_roles() -> dict[str, dict[str, Any]]:
         return json.load(handle)
 
 
+def load_resume_parser() -> ResumeParser:
+    """Create the shared parser used by backend resume parsing."""
+    import spacy
+
+    parser = ResumeParser()
+    # The resume parser's extraction logic only needs tokenization and regex
+    # helpers for this evaluation; using a blank pipeline avoids the cost of
+    # running full NER over thousands of long synthetic resume texts.
+    parser.nlp = spacy.blank("en")
+    return parser
+
+
 def infer_role(jd: str, roles: dict[str, dict[str, Any]]) -> str:
     jd_lower = jd.lower()
     scores = {
@@ -134,15 +151,15 @@ def infer_role(jd: str, roles: dict[str, dict[str, Any]]) -> str:
 
 
 def extract_real_features(
-    resume: str, jd: str, roles: dict[str, dict[str, Any]]
+    resume: str,
+    jd: str,
+    roles: dict[str, dict[str, Any]],
+    parser: ResumeParser,
 ) -> dict[str, float]:
     role = infer_role(jd, roles)
     role_template = roles[role]
-    skills = [
-        skill
-        for skill in role_template["critical_skills"]
-        if skill.lower() in resume.lower()
-    ]
+    parsed = parser._extract_information(resume)
+    skills = [skill for skill in parsed.skills if skill in role_template["critical_skills"]]
     years = re.search(r"(?i)(\d+(?:\.\d+)?)\s*(?:years?|yrs?)", resume)
     gpa = re.search(r"(?i)(?:gpa|cgpa)\s*[:=-]?\s*(\d+(?:\.\d+)?)", resume)
     project_hits = re.findall(r"(?i)\b(?:project|developed|built|implemented)\b", resume)
@@ -150,8 +167,8 @@ def extract_real_features(
     candidate = {
         "experience_years": float(years.group(1)) if years else np.nan,
         "skills": skills,
-        "projects": [{} for _ in project_hits] if project_hits else [],
-        "certifications": cert_hits,
+        "projects": [{"summary": hit} for hit in project_hits] if project_hits else [],
+        "certifications": parsed.certifications or cert_hits,
         "education": {"gpa": float(gpa.group(1)) if gpa else np.nan},
     }
     values = extract_features(candidate, role_template, jd).to_dict()
@@ -170,7 +187,8 @@ def inspect_and_load_real_data() -> pd.DataFrame | None:
         from datasets import load_dataset, load_dataset_builder
 
         builder = load_dataset_builder("cnamuangtoun/resume-job-description-fit")
-        print(f"Real dataset columns: {list(builder.info.features)}")
+        columns = list(builder.info.features)
+        print(f"Real dataset columns: {columns}")
         print(f"Real dataset license: {builder.info.license or 'not declared'}")
         data = load_dataset("cnamuangtoun/resume-job-description-fit")
     except Exception as exc:
@@ -181,12 +199,16 @@ def inspect_and_load_real_data() -> pd.DataFrame | None:
         )
         return None
 
-    split = next(iter(data.values())) if hasattr(data, "values") else data
+    split = data["train"] if hasattr(data, "__getitem__") and "train" in data else next(iter(data.values()))
     frame = split.to_pandas()
     required = {"resume_text", "job_description_text", "label"}
     missing = required - set(frame.columns)
     if missing:
-        raise ValueError(f"Dataset is missing required columns: {sorted(missing)}")
+        print(
+            "The downloaded dataset does not expose the expected raw text columns. "
+            f"Missing: {sorted(missing)}. Skipping the real-data section."
+        )
+        return None
     labels = {"No Fit": 0, "Potential Fit": 1, "Good Fit": 2}
     frame["label_id"] = frame["label"].map(labels)
     frame = frame.dropna(subset=["label_id"]).reset_index(drop=True)
@@ -195,8 +217,9 @@ def inspect_and_load_real_data() -> pd.DataFrame | None:
 
 def score_real_data(frame: pd.DataFrame) -> dict[str, Any]:
     roles = load_roles()
+    parser = load_resume_parser()
     feature_rows = [
-        extract_real_features(str(row.resume_text), str(row.job_description_text), roles)
+        extract_real_features(str(row.resume_text), str(row.job_description_text), roles, parser)
         for row in frame.itertuples()
     ]
     features = pd.DataFrame(feature_rows, columns=FEATURES)
@@ -205,7 +228,7 @@ def score_real_data(frame: pd.DataFrame) -> dict[str, Any]:
         print(f"  {feature}: {features[feature].notna().mean():.4f}")
 
     model = xgb.XGBRanker()
-    model.load_model(ROOT / "backend" / "models" / "trained" / "baseline_v1" / "xgb_ranker.json")
+    model.load_model(str(ROOT / "backend" / "models" / "trained" / "baseline_v1" / "xgb_ranker.json"))
     model_scores = model.predict(features)
     vectorizer = TfidfVectorizer(stop_words="english")
     tfidf_scores = np.array(

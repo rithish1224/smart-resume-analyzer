@@ -1,5 +1,63 @@
 import pandas as pd
 import numpy as np
+import re
+from datetime import date
+
+CERTIFICATION_KEYWORDS = (
+    "aws", "azure", "gcp", "cissp", "ceh", "pmp", "scrum", "kubernetes",
+    "oracle", "comptia", "certified", "certification", "certificate",
+)
+DEGREE_KEYWORDS = {
+    "phd": 4, "doctorate": 4, "mtech": 3, "m.s": 3, "ms ": 3, "master": 3,
+    "mba": 3, "btech": 2, "b.e": 2, "b.s": 2, "bs ": 2, "bachelor": 2,
+    "diploma": 1,
+}
+
+
+def extract_required_years(text: str) -> float:
+    matches = re.findall(
+        r"(?i)(?:at least|minimum(?: of)?|requires?|required|need(?:s)?)"
+        r"\s*(\d+(?:\.\d+)?)\s*(?:\+\s*)?(?:years?|yrs?)",
+        text or "",
+    )
+    return float(max(map(float, matches))) if matches else np.nan
+
+
+def extract_experience_years(text: str) -> float:
+    """Extract explicit years and sum non-overlapping date-range spans."""
+    text = text or ""
+    explicit = [
+        (m.start(), m.end(), float(m.group(1)))
+        for m in re.finditer(r"(?i)(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)", text)
+    ]
+    ranges = []
+    for match in re.finditer(
+        r"(?i)\b((?:19|20)\d{2})\s*(?:-|–|—|to)\s*(present|current|"
+        r"(?:19|20)\d{2})\b",
+        text,
+    ):
+        start = int(match.group(1))
+        end = date.today().year if match.group(2).lower() in {"present", "current"} else int(match.group(2))
+        if end >= start:
+            ranges.append((match.start(), match.end(), float(end - start)))
+    spans = sorted(explicit + ranges)
+    total = 0.0
+    occupied: list[tuple[int, int]] = []
+    for start, end, years in spans:
+        if not any(start < other_end and end > other_start for other_start, other_end in occupied):
+            total += years
+            occupied.append((start, end))
+    return total if spans else np.nan
+
+
+def extract_certifications(text: str) -> list[str]:
+    lowered = (text or "").lower()
+    return [keyword for keyword in CERTIFICATION_KEYWORDS if keyword in lowered]
+
+
+def extract_degree_level(text: str) -> float:
+    lowered = f"{(text or '').lower()} "
+    return float(max((level for keyword, level in DEGREE_KEYWORDS.items() if keyword in lowered), default=np.nan))
 
 def extract_features(candidate: dict, role_template: dict, jd_text: str = "") -> pd.Series:
     """

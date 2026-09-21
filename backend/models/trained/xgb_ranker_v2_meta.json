@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "model_type": "XGBClassifier",
+  "features": [
+    "tfidf_similarity",
+    "skill_match_ratio",
+    "resume_skill_count",
+    "jd_skill_count",
+    "missing_skill_count",
+    "exp_years",
+    "required_years",
+    "exp_gap",
+    "num_projects",
+    "num_certs",
+    "degree_level",
+    "has_degree",
+    "gpa",
+    "has_gpa",
+    "resume_chars",
+    "jd_chars",
+    "minilm_mean_cosine",
+    "minilm_max_cosine"
+  ]
+}
