@@ -25,3 +25,12 @@ async def init_db():
     async with engine.begin() as conn:
         # Create all tables
         await conn.run_sync(Base.metadata.create_all)
+        if settings.DATABASE_URL.startswith("sqlite"):
+            from sqlalchemy import inspect, text
+            columns = await conn.run_sync(
+                lambda sync_conn: {column["name"] for column in inspect(sync_conn).get_columns("analysis_reports")}
+            )
+            if "requirement_coverage" not in columns:
+                await conn.execute(text("ALTER TABLE analysis_reports ADD COLUMN requirement_coverage VARCHAR"))
+            if "overall_match_percent" not in columns:
+                await conn.execute(text("ALTER TABLE analysis_reports ADD COLUMN overall_match_percent INTEGER"))

@@ -5,7 +5,7 @@ All measured values below are from this evaluation run. Synthetic in-sample valu
 | Evaluation | NDCG@5 | NDCG@10 | P@5 | MAP | ROC-AUC | Spearman |
 |---|---:|---:|---:|---:|---:|---:|
 | synthetic in-sample | 0.9836 | 0.9533 | 0.9750 | 0.8903 | 0.9485 | n/a |
-| synthetic holdout | 0.9138 | 0.9637 | 0.4500 | 0.8202 | 0.9198 | n/a |
+| synthetic holdout | 0.9138 | 0.9648 | 0.4500 | 0.8370 | 0.9234 | n/a |
 | real data | 0.5218 | 0.5816 | 0.4427 | 0.4927 | 0.4910 | -0.0179 |
 | TF-IDF | 0.7086 | 0.7268 | 0.5464 | 0.6029 | 0.6463 | 0.2654 |
 | random | 0.5176 | 0.5685 | 0.4287 | 0.4840 | 0.4871 | -0.0246 |

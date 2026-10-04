@@ -57,6 +57,12 @@ export const analyzeApi = {
   },
 };
 
+export const reportsApi = {
+  list: (params) => apiClient.get('/reports', { params }),
+  get: (id) => apiClient.get(`/reports/${id}`),
+  remove: (id) => apiClient.delete(`/reports/${id}`),
+};
+
 export const roadmapApi = {
   getRoadmap: (id) => apiClient.get(`/roadmap/${id}`),
   generateRoadmap: (data) => apiClient.post('/roadmap', data),

@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import RegisterForm from '../components/auth/RegisterForm'
 import toast from 'react-hot-toast'
+import Logo from '../components/ui/Logo'
 
 export default function Register() {
   const { isAuthenticated, register, login } = useAuth()
@@ -42,27 +43,21 @@ export default function Register() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-[calc(100vh-64px)] flex"
+      className="app-shell flex min-h-screen items-center justify-center px-6 py-12"
     >
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-900/50 to-violet-900/50 p-12 flex-col justify-between border-r border-white/10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+      <div className="hidden lg:flex lg:w-1/2 max-w-xl p-12 flex-col justify-center relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 flex items-center justify-center">
-              <span className="font-outfit font-bold text-xl">S</span>
-            </div>
-            <span className="font-outfit font-bold text-2xl tracking-tight">SmartCompetency</span>
-          </div>
+          <div className="mb-12"><Logo /></div>
           
-          <h1 className="text-4xl font-outfit font-bold mb-6 leading-tight">
-            Next-Gen AI <br /> Talent Analytics
+          <h1 className="text-4xl font-bold mb-6 leading-tight">
+            Start with clearer candidate evidence.
           </h1>
           
           <ul className="space-y-6 mt-12">
             {[
-              { title: 'Resume Parsing', desc: 'Accurate extraction of skills and experience.' },
-              { title: 'Competency Scoring', desc: 'Multi-dimensional evaluation against role requirements.' },
-              { title: 'Explainable AI', desc: 'SHAP values to understand every AI decision.' }
+              { title: 'Resume analysis', desc: 'Extract the evidence that matters for a role.' },
+              { title: 'Skill coverage', desc: 'See matched and missing requirements at a glance.' },
+              { title: 'Human review', desc: 'Keep the final decision with a human reviewer.' }
             ].map((feature, idx) => (
               <li key={idx} className="flex gap-4">
                 <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0">
@@ -80,11 +75,11 @@ export default function Register() {
         </div>
         
         <div className="relative z-10 text-slate-400 text-sm">
-          &copy; {new Date().getFullYear()} Smart Competency Diagnostic.
+          © 2026 Skillora
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8 sm:p-12">
+      <div className="w-full max-w-md flex items-center justify-center p-8 sm:p-12">
         <div className="w-full max-w-md">
           <RegisterForm onRegister={handleRegister} isLoading={isLoading} />
         </div>

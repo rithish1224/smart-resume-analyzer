@@ -56,6 +56,16 @@ async def get_current_user(request: Request, db: AsyncSession = Depends(get_db))
         
     return user
 
+
+async def get_optional_current_user(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    try:
+        return await get_current_user(request, db)
+    except HTTPException:
+        return None
+
 def require_role(*roles: RoleEnum) -> Callable:
     """Dependency factory to require specific roles."""
     async def role_checker(current_user: User = Depends(get_current_user)):

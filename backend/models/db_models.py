@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from enum import Enum as PyEnum
-from sqlalchemy import Column, String, Float, Boolean, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, String, Float, Boolean, DateTime, ForeignKey, Enum, Integer
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.types import TypeDecorator, CHAR
 import json
@@ -92,3 +92,21 @@ class ModelVersion(Base):
     auc_score = Column(Float, nullable=True)
     num_training_samples = Column(Float, nullable=True)
     is_active = Column(Boolean, default=False)
+
+
+class AnalysisReport(Base):
+    __tablename__ = "analysis_reports"
+
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
+    user_id = Column(GUID(), ForeignKey("users.id"), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    resume_filename = Column(String, nullable=False)
+    target_role = Column(String, nullable=True)
+    job_description = Column(String, nullable=False)
+    match_level = Column(String, nullable=False)
+    skill_coverage = Column(Integer, nullable=True)
+    overall_match_percent = Column(Integer, nullable=True)
+    matched_skills = Column(String, nullable=False, default="[]")
+    missing_skills = Column(String, nullable=False, default="[]")
+    summary = Column(String, nullable=False)
+    requirement_coverage = Column(String, nullable=True)

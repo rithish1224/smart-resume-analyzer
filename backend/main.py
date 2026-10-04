@@ -67,8 +67,9 @@ async def lifespan(app: FastAPI):
         app.state.xgb_model = None
 
     try:
-        from backend.routers.analyze import _get_parser, _load_v2, load_embedding_model
+        from backend.routers.analyze import _get_parser, _load_v2, _load_v3, load_embedding_model
         app.state.resume_parser = _get_parser()
+        _load_v3()
         _load_v2()
         load_embedding_model()
         logger.info("✅ v2 analysis assets loaded")
@@ -133,7 +134,7 @@ if os.path.exists("uploads"):
     app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # ── Include Routers ────────────────────────────────────────────────────────────
-from backend.routers import auth, upload, score, explain, fairness, compare, roadmap, export, admin, analyze, jobs
+from backend.routers import auth, upload, score, explain, fairness, compare, roadmap, export, admin, analyze, jobs, reports
 from backend.routers import improve  # ← Resume Improvement Module (additive)
 
 app.include_router(auth.router,     prefix="/api/auth",     tags=["Authentication"])
@@ -147,6 +148,7 @@ app.include_router(export.router,   prefix="/api/export",   tags=["Export"])
 app.include_router(admin.router,    prefix="/api/admin",    tags=["Admin"])
 app.include_router(improve.router,  prefix="/api/improve",  tags=["Resume Improvement"])  # ← NEW
 app.include_router(analyze.router, prefix="/api", tags=["Part B Analysis"])
+app.include_router(reports.router, prefix="/api", tags=["Report History"])
 app.include_router(jobs.router, prefix="/api", tags=["Jobs and Candidates"])
 
 # ── Exception Handlers ─────────────────────────────────────────────────────────

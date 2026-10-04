@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProviderContextProvider } from './context/ProviderContext'
 import { Toaster } from 'react-hot-toast'
@@ -11,6 +11,8 @@ import Analyze from './pages/Analyze'
 import Compare from './pages/Compare'
 import Admin from './pages/Admin'
 import About from './pages/About'
+import History from './pages/History'
+import ReportDetail from './pages/ReportDetail'
 import { useAuth } from './context/AuthContext'
 
 function ProtectedRoute({ children, roles }) {
@@ -29,6 +31,8 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/analyze" element={<ProtectedRoute><Analyze /></ProtectedRoute>} />
+        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+        <Route path="/history/:id" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
         <Route path="/compare" element={<ProtectedRoute roles={['recruiter','admin']}><Compare /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute roles={['recruiter','admin']}><Admin /></ProtectedRoute>} />
         <Route path="/about" element={<About />} />
@@ -38,17 +42,24 @@ function AppRoutes() {
   )
 }
 
+function AppShell() {
+  const location = useLocation()
+  const { isAuthenticated } = useAuth()
+  const authPage = location.pathname === '/login' || location.pathname === '/register'
+  return (
+    <div className={`app-shell min-h-screen text-white ${isAuthenticated && !authPage && !['/', '/about'].includes(location.pathname) ? 'md:pl-64' : ''}`}>
+      {!authPage && <Navbar />}
+      <main><AppRoutes /></main>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <ProviderContextProvider>
-          <div className="min-h-screen bg-space text-white font-inter">
-            <Navbar />
-            <main>
-              <AppRoutes />
-            </main>
-          </div>
+          <AppShell />
           <Toaster position="top-right" toastOptions={{ style: { background: '#0f0f2e', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' } }} />
         </ProviderContextProvider>
       </AuthProvider>

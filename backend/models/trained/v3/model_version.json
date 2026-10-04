@@ -1,0 +1,57 @@
+{
+  "version": "3.0",
+  "model_type": "XGBRanker",
+  "features": [
+    "tfidf_similarity",
+    "skill_match_ratio",
+    "resume_skill_count",
+    "jd_skill_count",
+    "missing_skill_count",
+    "exp_years",
+    "required_years",
+    "exp_gap",
+    "num_projects",
+    "num_certs",
+    "degree_level",
+    "has_degree",
+    "gpa",
+    "has_gpa",
+    "resume_chars",
+    "jd_chars",
+    "minilm_mean_cosine",
+    "minilm_max_cosine",
+    "exp_years_missing",
+    "required_years_missing",
+    "gpa_missing"
+  ],
+  "seed": 42,
+  "source": {
+    "source": "cnamuangtoun/resume-job-description-fit",
+    "license": ""
+  },
+  "hyperparameters": {
+    "objective": "rank:ndcg",
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "n_estimators": 70
+  },
+  "library_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "xgboost": "3.4.1",
+    "scikit-learn": "1.9.1",
+    "sentence-transformers": "6.1.0"
+  },
+  "metrics": {
+    "ndcg@3": 0.7196846807909394,
+    "ndcg@5": 0.7432403372376136,
+    "ndcg@10": 0.8055348119416627,
+    "map": 0.763711524281087,
+    "good_potential": 0.5636212624584718,
+    "potential_no_fit": 0.6571607708195943,
+    "good_no_fit": 0.6741774346336582,
+    "qualified_groups": 165
+  },
+  "relative_score": true,
+  "relative_score_is_probability": false
+}

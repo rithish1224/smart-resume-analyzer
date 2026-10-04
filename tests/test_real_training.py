@@ -41,6 +41,28 @@ def test_decimal_and_hedged_experience_years():
     assert extract_required_years("3+ years of professional experience") == 3
 
 
+def test_explicit_experience_total_takes_precedence_over_date_ranges():
+    assert extract_experience_years(
+        "about 1.5 years of experience; Jan 2025 - Present; Jun 2024 - Dec 2024"
+    ) == 1.5
+    assert extract_experience_years(
+        "5 years of experience; Jan 2022 - Present; Jul 2019 - Dec 2021"
+    ) == 5
+    assert extract_experience_years(
+        "6 years of experience; Mar 2021 - Present; Jun 2019 - Feb 2021"
+    ) == 6
+
+
+def test_demo_resume_experience_values():
+    from pathlib import Path
+
+    sample_dir = Path(__file__).resolve().parents[1] / "scripts" / "demo_samples"
+    expected = {"good": 5.0, "mediocre": 1.5, "unrelated": 6.0}
+    for name, years in expected.items():
+        text = (sample_dir / f"{name}_resume.txt").read_text(encoding="utf-8")
+        assert extract_experience_years(text) == years
+
+
 def test_group_split_has_no_resume_or_job_overlap():
     frame = pd.DataFrame(
         {

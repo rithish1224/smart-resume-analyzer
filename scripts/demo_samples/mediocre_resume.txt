@@ -1,0 +1,26 @@
+Rahul Verma (sample candidate)
+Junior Python Developer | Chennai, India
+
+Summary
+Junior developer with about 1.5 years of experience in Python and web development. Comfortable with Flask and MySQL, and keen to learn cloud and container technologies.
+
+Experience
+Python Developer, Brightside Web Solutions (Jan 2025 - Present)
+- Built and maintained internal tools and REST endpoints using Flask.
+- Wrote SQL queries and stored procedures in MySQL for reporting features.
+- Fixed bugs, wrote basic unit tests, and used Git for version control.
+- Deployed applications to a shared Linux server with help from a senior teammate.
+
+Intern, Brightside Web Solutions (Jun 2024 - Dec 2024)
+- Assisted with front-end fixes in HTML and CSS.
+- Wrote small Python scripts for data cleaning in Excel and CSV files.
+
+Skills
+Python, Flask, SQL, MySQL, HTML, CSS, JavaScript basics, Git, Linux basics. Currently learning Docker.
+
+Education
+B.Sc in Information Technology, 2024
+
+Projects
+- Student attendance web app using Flask and MySQL.
+- Personal expense tracker with a simple REST API.

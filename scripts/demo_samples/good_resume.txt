@@ -1,0 +1,33 @@
+Priya Raman (sample candidate)
+Backend Engineer | Bengaluru, India
+
+Summary
+Backend engineer with 5 years of experience building and deploying Python APIs on AWS. Strong in FastAPI, PostgreSQL, Docker, and CI/CD, with experience serving machine learning models in production.
+
+Experience
+Backend Engineer, Orbit Freight Tech (Jan 2022 - Present)
+- Built and maintained 12 REST microservices using Python and FastAPI serving 2 million requests per day.
+- Designed PostgreSQL schemas and optimized slow SQL queries, cutting average query time by 45 percent.
+- Containerized services with Docker and deployed them on AWS (EC2, S3, RDS, Lambda).
+- Set up CI/CD pipelines with GitHub Actions and increased automated test coverage from 40 to 85 percent.
+- Added Redis caching, reducing API latency by 30 percent.
+- Exposed a demand-forecasting model through a FastAPI endpoint in collaboration with the data science team.
+- Mentored two junior engineers and led code reviews.
+
+Software Developer, Kite Systems (Jul 2019 - Dec 2021)
+- Developed Flask APIs and background workers in Python for an inventory platform.
+- Wrote unit and integration tests with pytest and managed releases with Git.
+- Migrated a MySQL database to PostgreSQL with zero downtime.
+
+Skills
+Python, FastAPI, Flask, SQL, PostgreSQL, Docker, AWS (EC2, S3, RDS, Lambda), Redis, REST APIs, Git, CI/CD, GitHub Actions, pytest, basic Kubernetes and Terraform.
+
+Education
+B.Tech in Computer Science and Engineering, 2019
+
+Certifications
+AWS Certified Developer - Associate
+
+Projects
+- Open-source rate limiter library for FastAPI.
+- Real-time shipment tracker using WebSockets and Redis.

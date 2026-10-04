@@ -1,0 +1,16 @@
+﻿# V3 training dependencies -- pinned to .venv (Python 3.14.5)
+# Run: pip install -r backend/requirements-v3.txt
+# NOTE: model_version.json records sklearn_version at save time.
+#       Loading code emits a warning if the runtime version differs.
+
+scikit-learn==1.9.1
+xgboost==3.4.1
+sentence-transformers==6.1.0
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+datasets==5.0.1
+huggingface_hub==1.33.0
+torch==2.14.1
+transformers==5.18.0
+joblib==1.6.0

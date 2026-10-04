@@ -30,7 +30,7 @@ class XGBRankerModel:
                 with open(metadata_path, 'r', encoding='utf-8') as f:
                     metadata = json.load(f)
 
-            if metadata.get("model_type") == "XGBClassifier":
+            if metadata.get("model_type") == "XGBClassifier" or "v2" in os.path.basename(model_path):
                 self.classifier = xgb.XGBClassifier()
                 self.classifier.load_model(model_path)
                 self.model = None

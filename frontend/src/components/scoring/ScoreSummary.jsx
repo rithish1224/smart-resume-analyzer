@@ -43,7 +43,8 @@ export default function ScoreSummary({ score, modelVersion }) {
       animate={{ opacity: 1, y: 0 }}
       className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col items-center relative overflow-hidden h-full"
     >
-      <h3 className="text-lg font-outfit font-medium text-slate-300 mb-6">Overall Competency Score</h3>
+      <h3 className="text-lg font-outfit font-medium text-slate-300 mb-2">Model-estimated fit probability</h3>
+      <p className="text-xs text-slate-400 text-center mb-6">Model context is assistive, not a probability or hiring decision.</p>
       
       <div className="relative w-48 h-48 mb-6 flex items-center justify-center">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">

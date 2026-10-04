@@ -28,7 +28,7 @@ const LoginForm = ({ onLogin, isLoading, error }) => {
           <Sparkles className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold font-['Outfit'] mb-2">Welcome Back</h2>
-        <p className="text-gray-400 text-sm">Sign in to Smart Competency Diagnostic</p>
+        <p className="text-gray-400 text-sm">Sign in to Skillora</p>
       </div>
 
       <motion.form 

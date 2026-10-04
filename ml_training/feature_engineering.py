@@ -8,8 +8,9 @@ CERTIFICATION_KEYWORDS = (
     "oracle", "comptia", "certified", "certification", "certificate",
 )
 DEGREE_KEYWORDS = {
-    "phd": 4, "doctorate": 4, "mtech": 3, "m.s": 3, "ms ": 3, "master": 3,
-    "mba": 3, "btech": 2, "b.e": 2, "b.s": 2, "bs ": 2, "bachelor": 2,
+    "phd": 4, "doctorate": 4, "mtech": 3, "m.tech": 3, "msc": 3, "m.sc": 3,
+    "m.s": 3, "ms ": 3, "master": 3, "mba": 3, "btech": 2, "b.tech": 2,
+    "be": 2, "b.e": 2, "bsc": 2, "b.sc": 2, "b.s": 2, "bs ": 2, "bachelor": 2,
     "diploma": 1,
 }
 
@@ -26,7 +27,7 @@ def extract_required_years(text: str) -> float:
 
 
 def extract_experience_years(text: str) -> float:
-    """Extract explicit years and sum non-overlapping date-range spans."""
+    """Prefer explicit total experience; use date ranges only as a fallback."""
     text = text or ""
     explicit = [
         (m.start(), m.end(), float(m.group(1)))
@@ -42,6 +43,8 @@ def extract_experience_years(text: str) -> float:
         end = date.today().year if match.group(2).lower() in {"present", "current"} else int(match.group(2))
         if end >= start:
             ranges.append((match.start(), match.end(), float(end - start)))
+    if explicit:
+        return max(years for _, _, years in explicit)
     spans = sorted(explicit + ranges)
     total = 0.0
     occupied: list[tuple[int, int]] = []
@@ -59,6 +62,8 @@ def extract_certifications(text: str) -> list[str]:
 
 def extract_degree_level(text: str) -> float:
     lowered = f"{(text or '').lower()} "
+    normalized = re.sub(r"(?<=\b)(b|m)\s*\.\s*(tech|e|sc)\b", r"\1\2", lowered)
+    lowered = f"{lowered} {normalized}"
     return float(max((level for keyword, level in DEGREE_KEYWORDS.items() if keyword in lowered), default=np.nan))
 
 def extract_features(candidate: dict, role_template: dict, jd_text: str = "") -> pd.Series:

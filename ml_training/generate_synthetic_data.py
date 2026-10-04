@@ -1,4 +1,81 @@
-import json
+Repo: "Smart Competency Diagnostic" on Windows
+(C:\projects\ml project). Python 3.12, FastAPI,
+XGBoost XGBRanker in ml_training/.
+
+Goal: freeze the current baseline and measure how
+good the model really is. This is an evaluation
+task. Do NOT retrain or overwrite
+backend/models/trained/xgb_ranker.json or
+model_version.json.
+
+Phase 0: Setup
+- Create git branch "ml-upgrade".
+- Install the spaCy model:
+  python -m spacy download en_core_web_sm
+  and add it to backend/requirements.txt notes,
+  the README, and the Dockerfile.
+
+Phase 1: Freeze baseline
+- Copy xgb_ranker.json and model_version.json to
+  backend/models/trained/baseline_v1/.
+- Create docs/baseline.md with: algorithm and
+  hyperparameters (rank:ndcg, 200 trees, depth 5,
+  lr 0.05, subsample 0.8, colsample 0.8, seed 42),
+  the 5 features (exp_years, skill_match_ratio,
+  num_projects, num_certs, gpa), dataset (500
+  synthetic profiles, 8 domains), how labels are
+  made (75th percentile of a heuristic score:
+  30% skill, 30% experience, 25% education,
+  15% projects plus noise), and the reported
+  metrics: NDCG@5 0.9836, NDCG@10 0.9533,
+  P@5 0.9750, MAP 0.8903, ROC-AUC 0.9485.
+  Label them clearly "in-sample, synthetic labels,
+  no holdout".
+- Fix README overclaims: it says "over 20
+  features" but training uses 5. List the real
+  features, and mark the data as synthetic.
+
+Phase 2: Honest evaluation
+Create ml_training/honest_eval.py (new file):
+a) Synthetic holdout: split training_features.csv
+   80/20 within each domain, train a fresh model in
+   memory with the same hyperparameters on the 80%,
+   and report NDCG@5/10, P@5, ROC-AUC on the 20%.
+b) Real-data test: load the Hugging Face dataset
+   "cnamuangtoun/resume-job-description-fit"
+   using the datasets library. Check its columns
+   and license first, and print them. Map labels
+   No Fit=0, Potential Fit=1, Good Fit=2.
+   Reuse the existing parsing/feature code
+   (feature_engineering.py and backend/services)
+   to compute the same 5 features from the real
+   resume and JD text. Features that cannot be
+   extracted (for example gpa) stay NaN. Report the
+   extraction coverage per feature.
+   Score the real pairs with the saved baseline
+   model and report ROC-AUC (Good vs. rest) and
+   Spearman correlation with labels. Report
+   NDCG@k only for JDs that have 2 or more resumes
+   with differing labels, and print how many
+   qualify.
+c) Baselines on the same real test pairs:
+   random scores, and TF-IDF cosine similarity
+   between resume and JD. Same metrics.
+d) Write docs/honest_eval.md with one comparison
+   table: synthetic in-sample vs. synthetic holdout
+   vs. real data vs. TF-IDF vs. random, plus
+   notes on limitations.
+
+Rules:
+- Report numbers exactly as measured. Do not tune
+  anything to make results look better.
+- If the dataset cannot be downloaded, print
+  manual instructions and skip only that part.
+- New files only, except the README fix. Write down
+  every assumption. Small commits per phase.
+
+When done, print the comparison table and STOP.
+Do not start any upgrade work.import json
 import random
 import csv
 import math
